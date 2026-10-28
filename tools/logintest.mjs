@@ -1,0 +1,22 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch();
+const p = await (await b.newContext({ viewport:{width:1200,height:900} })).newPage();
+p.on('console', m => { if (m.type()==='error') console.log('CONSOLE-ERR', m.text().slice(0,180)); });
+p.on('requestfailed', r => console.log('REQ-FAILED', r.url().slice(0,90), r.failure()?.errorText));
+p.on('response', r => { if (r.url().includes('/api/')) console.log('API', r.status(), r.url().replace('http://127.0.0.1:3000','')); });
+
+await p.goto('http://127.0.0.1:3000/admin/login', { waitUntil:'domcontentloaded' });
+await p.waitForTimeout(1500);
+await p.fill('#email','admin@apronixtech.com');
+await p.fill('#password','Apronix!Admin#2026');
+await p.click('button[type=submit]');
+await p.waitForTimeout(7000);
+console.log('FINAL URL:', p.url());
+const btn = await p.textContent('button[type=submit]').catch(()=>'(no submit button)');
+console.log('BUTTON TEXT:', JSON.stringify(btn.trim()));
+const alert = await p.textContent('[role=alert]').catch(()=>'(none)');
+console.log('ALERT:', JSON.stringify(alert.trim().slice(0,120)));
+const cookies = await p.context().cookies();
+console.log('SESSION COOKIE:', cookies.find(c=>c.name==='apronix_session') ? 'present' : 'MISSING');
+await p.screenshot({ path:'/tmp/login-after.png', fullPage:false });
+await b.close();

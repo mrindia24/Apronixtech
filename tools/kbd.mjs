@@ -1,0 +1,33 @@
+import { chromium } from 'playwright';
+const B='http://127.0.0.1:3000';
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ viewport:{width:1440,height:900} });
+const k = await ctx.newPage();
+k.on('pageerror', e=>console.log('PAGEERROR', e.message));
+await k.goto(B+'/', { waitUntil:'domcontentloaded', timeout:60000 });
+await k.waitForTimeout(3000);
+await k.focus('button[aria-controls="services-menu"]');
+await k.keyboard.press('Enter');
+await k.waitForTimeout(500);
+console.log('dropdown expanded:', await k.getAttribute('button[aria-controls="services-menu"]','aria-expanded'));
+await k.keyboard.press('Escape');
+await k.waitForTimeout(400);
+console.log('after escape:', await k.getAttribute('button[aria-controls="services-menu"]','aria-expanded'));
+await k.goto(B+'/contact', { waitUntil:'domcontentloaded', timeout:60000 });
+await k.waitForTimeout(3000);
+const t = k.locator('[id^="trigger-"]').first();
+await t.focus(); await k.keyboard.press('Enter');
+await k.waitForTimeout(400);
+console.log('accordion expanded:', await t.getAttribute('aria-expanded'));
+await k.keyboard.press('Tab');
+console.log('focus moved to:', await k.evaluate(()=>document.activeElement?.tagName + ':' + (document.activeElement?.textContent||'').trim().slice(0,30)));
+// reduced motion
+const rctx = await browser.newContext({ viewport:{width:1440,height:900}, reducedMotion:'reduce' });
+const r = await rctx.newPage();
+await r.goto(B+'/', { waitUntil:'domcontentloaded', timeout:60000 });
+await r.waitForTimeout(1500);
+console.log('reduced motion:', JSON.stringify(await r.evaluate(()=>{
+  const els=[...document.querySelectorAll('[data-reveal]')];
+  return { total: els.length, hidden: els.filter(e=>getComputedStyle(e).opacity==='0').length };
+})));
+await browser.close();

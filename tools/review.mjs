@@ -1,0 +1,21 @@
+import { chromium } from 'playwright';
+const B='http://127.0.0.1:3000';
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ viewport:{width:1440,height:900} });
+const page = await ctx.newPage();
+await page.goto(B+'/about', { waitUntil:'domcontentloaded' }); await page.waitForTimeout(2200);
+await page.screenshot({ path:'/tmp/shots/r-about.png' });
+await page.goto(B+'/work/sample-shopify-storefront', { waitUntil:'domcontentloaded' }); await page.waitForTimeout(2200);
+await page.screenshot({ path:'/tmp/shots/r-project.png' });
+// admin: login then screenshot editors
+await page.goto(B+'/admin/login', { waitUntil:'domcontentloaded' }); await page.waitForTimeout(1200);
+await page.fill('#email','admin@apronixtech.com'); await page.fill('#password','Apronix!Admin#2026');
+await page.click('button[type="submit"]'); await page.waitForURL('**/admin'); await page.waitForTimeout(1500);
+await page.goto(B+'/admin/blog', { waitUntil:'domcontentloaded' }); await page.waitForTimeout(1500);
+await page.screenshot({ path:'/tmp/shots/r-admin-blog.png' });
+await page.goto(B+'/admin/portfolio/new', { waitUntil:'domcontentloaded' }); await page.waitForTimeout(1500);
+await page.screenshot({ path:'/tmp/shots/r-admin-project.png' });
+await page.goto(B+'/admin/settings', { waitUntil:'domcontentloaded' }); await page.waitForTimeout(1500);
+await page.screenshot({ path:'/tmp/shots/r-admin-settings.png' });
+console.log('ok');
+await browser.close();

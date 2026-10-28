@@ -1,0 +1,14 @@
+import { chromium } from 'playwright';
+import { AxeBuilder } from '@axe-core/playwright';
+const b = await chromium.launch();
+const p = await (await b.newContext({ viewport:{width:1440,height:900} })).newPage();
+await p.goto('http://127.0.0.1:3000/', { waitUntil:'domcontentloaded' });
+await p.waitForTimeout(2000);
+await p.locator('button[aria-controls="apronix-chat-panel"]').click();
+await p.waitForTimeout(600);
+await p.getByRole('button', { name: 'What services do you offer?' }).first().click();
+await p.waitForTimeout(1200);
+const r = await new AxeBuilder({ page: p }).analyze();
+console.log('chat open — violations:', r.violations.length);
+r.violations.forEach(v => console.log('  -', v.id, v.impact, v.nodes.length));
+await b.close();

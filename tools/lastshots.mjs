@@ -1,0 +1,18 @@
+import { chromium } from 'playwright';
+const B='http://127.0.0.1:3000';
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ viewport:{width:1440,height:900} });
+const page = await ctx.newPage();
+const errs=[]; page.on('pageerror', e=>errs.push(e.message));
+await page.goto(B+'/', { waitUntil:'domcontentloaded' }); await page.waitForTimeout(2500);
+await page.screenshot({ path:'/tmp/shots/z-hero.png' });
+await page.evaluate(()=>window.scrollTo(0,1000)); await page.waitForTimeout(1500);
+await page.screenshot({ path:'/tmp/shots/z-services.png' });
+const m = await (await browser.newContext({ viewport:{width:390,height:844}, isMobile:true, deviceScaleFactor:2 })).newPage();
+await m.goto(B+'/', { waitUntil:'domcontentloaded' }); await m.waitForTimeout(2500);
+await m.screenshot({ path:'/tmp/shots/z-mobile.png' });
+await m.goto(B+'/contact', { waitUntil:'domcontentloaded' }); await m.waitForTimeout(2000);
+await m.evaluate(()=>window.scrollTo(0,420)); await m.waitForTimeout(800);
+await m.screenshot({ path:'/tmp/shots/z-mobile-contact.png' });
+console.log('errors:', errs.length?errs:'none');
+await browser.close();
