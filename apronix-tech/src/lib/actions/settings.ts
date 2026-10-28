@@ -5,6 +5,7 @@ import { requireUser } from '@/src/lib/auth';
 import { saveSiteSettings, type SiteSettings } from '@/src/lib/settings';
 import { CACHE_TAGS } from '@/src/lib/content';
 import { prisma } from '@/src/lib/prisma';
+import { deleteStoredFile } from '@/src/lib/storage';
 import type { ActionState } from '@/src/lib/actions/types';
 import { z } from 'zod';
 
@@ -122,11 +123,6 @@ export async function deleteMediaAction(formData: FormData) {
   const id = String(formData.get('id') ?? '');
   if (!id) return;
   const asset = await prisma.mediaAsset.delete({ where: { id } }).catch(() => null);
-  if (asset && asset.storage === 'local') {
-    const { unlink } = await import('node:fs/promises');
-    const path = await import('node:path');
-    const filePath = path.join(process.cwd(), 'public', asset.url.replace(/^\//, ''));
-    await unlink(filePath).catch(() => null);
-  }
+  if (asset) await deleteStoredFile(asset);
   revalidatePath('/admin/media');
 }
