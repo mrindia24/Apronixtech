@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { prisma } from '@/src/lib/prisma';
-import { createSession, setSessionCookie, verifyPassword } from '@/src/lib/auth';
+import { createSession, hashPassword, setSessionCookie, verifyPassword } from '@/src/lib/auth';
+import { serverEnv } from '@/src/lib/env';
 import { loginSchema } from '@/src/lib/validation';
 import { clientIp, clearMemoryBucket, memoryRateLimit } from '@/src/lib/rate-limit';
 import { pruneExpiredSessionsSafely } from '@/src/lib/auth-helpers';
@@ -40,7 +42,9 @@ export async function POST(request: Request) {
 
   const { email, password } = parsed.data;
 
-  const user = await prisma.adminUser.findUnique({ where: { email } });
+  const user =
+    (await prisma.adminUser.findUnique({ where: { email } })) ??
+    (await bootstrapFirstAdmin(email, password));
   // Constant-ish time: always run a bcrypt comparison to avoid timing leaks.
   const hash = user?.passwordHash ?? '$2a$12$invalidinvalidinvalidinvalidinvalidinvalidinvalidinva';
   const valid = await verifyPassword(password, hash);
@@ -67,4 +71,32 @@ export async function POST(request: Request) {
   void pruneExpiredSessionsSafely();
 
   return NextResponse.json({ ok: true, redirect: '/admin' });
+}
+
+function sameSecret(a: string, b: string): boolean {
+  const digest = (value: string) => createHash('sha256').update(value).digest();
+  return timingSafeEqual(digest(a), digest(b));
+}
+
+/**
+ * First-run bootstrap for hosted deploys where `npm run admin:create` cannot be
+ * run against the database. While no admin account exists, signing in with the
+ * ADMIN_EMAIL / ADMIN_PASSWORD environment variables creates the first
+ * SUPER_ADMIN. Once any admin exists this path is permanently inert.
+ */
+async function bootstrapFirstAdmin(email: string, password: string) {
+  const envEmail = serverEnv.adminEmail.toLowerCase();
+  const envPassword = serverEnv.adminPassword;
+  if (!envEmail || envPassword.length < 12) return null;
+  if (email !== envEmail || !sameSecret(password, envPassword)) return null;
+  if ((await prisma.adminUser.count()) > 0) return null;
+
+  return prisma.adminUser.create({
+    data: {
+      email,
+      name: serverEnv.adminName,
+      role: 'SUPER_ADMIN',
+      passwordHash: await hashPassword(password),
+    },
+  });
 }

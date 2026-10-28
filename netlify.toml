@@ -1,0 +1,5 @@
+# The Next.js app lives in the apronix-tech/ subdirectory.
+[build]
+  base = "apronix-tech"
+  command = "npm run build"
+  publish = ".next"
