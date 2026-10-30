@@ -21,7 +21,7 @@ function readBool(key: string, fallback = false): boolean {
 
 /** Public values that are safe to ship to the browser. */
 export const publicEnv = {
-  siteUrl: readString('NEXT_PUBLIC_SITE_URL', 'http://localhost:3000').replace(/\/$/, ''),
+  siteUrl: readString('https://www.apronixtech.in').replace(/\/$/, ''),
   siteName: readString('NEXT_PUBLIC_SITE_NAME', 'Apronix Tech'),
   whatsappNumber: readString('NEXT_PUBLIC_WHATSAPP_NUMBER'), // digits with country code, no +
   analyticsId: readString('NEXT_PUBLIC_ANALYTICS_ID'), // GA4 measurement id (consent gated)
