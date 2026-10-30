@@ -2,7 +2,7 @@
 // PostgreSQL + Prisma ORM
 generator client {
   provider      = "prisma-client-js"
-  // "rhel-openssl-3.0.x" is the runtime used by Netlify Functions (AWS Lambda).
+  // Include the Linux OpenSSL 3 runtime used by Vercel Functions.
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
@@ -374,7 +374,7 @@ model MediaAsset {
   width        Int?
   height       Int?
   alt          String?
-  storage      String     @default("local") // local | s3 | vercel-blob
+  storage      String     @default("local") // local | s3
   uploadedById String?
   uploadedBy   AdminUser? @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
   createdAt    DateTime   @default(now())

@@ -2,9 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    // Fall back to the URL Netlify exposes at build time so canonical URLs and the
-    // sitemap are correct before NEXT_PUBLIC_SITE_URL is configured explicitly.
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || process.env.URL || 'http://localhost:3000',
+    // Vercel exposes the deployment hostname at build time without a scheme.
+    NEXT_PUBLIC_SITE_URL:
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
   },
   // Allow the sandbox preview proxy (and local network hosts) to load dev assets.
   allowedDevOrigins: ['*.e2b.app', '*.e2b.dev', 'localhost', '127.0.0.1', '*.local'],

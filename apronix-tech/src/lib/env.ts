@@ -32,7 +32,7 @@ export const publicEnv = {
 };
 
 export const serverEnv = {
-  databaseUrl: readString('DATABASE_URL') || readString('NETLIFY_DB_URL'),
+  databaseUrl: readString('DATABASE_URL'),
   authSecret: readString('AUTH_SECRET'),
   adminEmail: readString('ADMIN_EMAIL'),
   adminPassword: readString('ADMIN_PASSWORD'),
@@ -83,7 +83,7 @@ export const features = {
 export function assertProductionConfig() {
   if (!isServer || !isProd) return;
   const missing: string[] = [];
-  if (!serverEnv.databaseUrl) missing.push('DATABASE_URL or NETLIFY_DB_URL');
+  if (!serverEnv.databaseUrl) missing.push('DATABASE_URL');
   if (!serverEnv.authSecret || serverEnv.authSecret.length < 32) missing.push('AUTH_SECRET (32+ chars)');
   if (missing.length) {
     throw new Error(`Missing required production environment variables: ${missing.join(', ')}`);

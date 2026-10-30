@@ -9,21 +9,9 @@ import { slugify } from '@/src/lib/utils';
  * Media storage adapter.
  *
  * Local disk is the development default (`public/uploads`, served by Next).
- * On Netlify (read-only filesystem) uploads go to Netlify Blobs and are served
- * from the same `/uploads/<file>` URLs by `app/uploads/[file]/route.ts`.
  * When S3-compatible credentials are configured the same interface writes to
  * object storage instead — no application code changes required.
  */
-
-export const UPLOADS_STORE = 'uploads';
-
-/** True when running on Netlify, where the Blobs context is injected. */
-export function blobsAvailable(): boolean {
-  return Boolean(
-    process.env.NETLIFY_BLOBS_CONTEXT ||
-      (globalThis as { netlifyBlobsContext?: unknown }).netlifyBlobsContext,
-  );
-}
 
 const EXTENSION_MIME: Record<string, string> = {
   jpg: 'image/jpeg',
@@ -50,7 +38,7 @@ export const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8 MB
 export type StoredFile = {
   url: string;
   filename: string;
-  storage: 'local' | 's3' | 'blobs';
+  storage: 'local' | 's3';
   sizeBytes: number;
   width?: number;
   height?: number;
@@ -158,21 +146,6 @@ async function persist(
     };
   }
 
-  if (blobsAvailable()) {
-    const { getStore } = await import('@netlify/blobs');
-    const bytes = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
-    await getStore(UPLOADS_STORE).set(filename, bytes);
-    return {
-      url: `/uploads/${filename}`,
-      filename,
-      storage: 'blobs',
-      sizeBytes: buffer.byteLength,
-      width,
-      height,
-      mimeType,
-    };
-  }
-
   const dir = path.join(process.cwd(), 'public', 'uploads');
   await mkdir(dir, { recursive: true });
   await writeFile(path.join(dir, filename), buffer);
@@ -188,11 +161,6 @@ async function persist(
 }
 
 export async function deleteStoredFile(asset: { storage: string; url: string }): Promise<void> {
-  if (asset.storage === 'blobs') {
-    const { getStore } = await import('@netlify/blobs');
-    await getStore(UPLOADS_STORE).delete(asset.url.replace(/^\/uploads\//, '')).catch(() => null);
-    return;
-  }
   if (asset.storage === 'local') await deleteLocalFile(asset.url);
 }
 

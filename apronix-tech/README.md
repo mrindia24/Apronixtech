@@ -173,8 +173,8 @@ source/medium/campaign, consent flag, timestamp.
 
 ## Deployment
 
-Any Node.js host with PostgreSQL works. Vercel + Neon/Supabase is the simplest
-path; Railway, Render, Fly.io and a VPS all work too.
+Deploy the app on Vercel and connect it to PostgreSQL through Neon, Supabase, or
+another managed database provider.
 
 ### 1. Database
 
@@ -189,7 +189,9 @@ npm run admin:create -- --email you@domain.com --role SUPER_ADMIN
 
 ### 2. Environment
 
-Set every variable from `.env.example` in the host's environment settings.
+Set every variable from `.env.example` in the Vercel project's environment
+settings.
+
 Minimum for production: `DATABASE_URL`, `AUTH_SECRET`, `NEXT_PUBLIC_SITE_URL`.
 Strongly recommended: SMTP settings, `ENQUIRY_INBOX_EMAIL`, `SUPPORT_EMAIL`.
 
@@ -201,52 +203,45 @@ npm run build
 npm start                     # serves on $PORT (default 3000)
 ```
 
-Platform presets:
+### 4. Deploy to Vercel
 
-- **Vercel**: import the repo; add env vars; framework auto-detected. Media
-  uploads must use S3/R2 (the filesystem is ephemeral).
-- **Netlify**: use the Next.js runtime, same env vars.
-- **Railway / Render / Fly.io**: add a Postgres add-on, set the build command to
-  `npm run build` and the start command to `npm start`.
-- **VPS (Ubuntu)**: Node 20+, `pm2 start npm -- start` or a systemd unit, with
-  nginx as a reverse proxy.
+Import the repository into Vercel, set the project root to `apronix-tech`, and
+add the environment variables. Vercel detects the Next.js framework
+automatically. Media uploads must use S3-compatible storage such as S3 or R2
+because the serverless filesystem is ephemeral.
 
-### 4. Domain, DNS and HTTPS
+### 5. Domain, DNS and HTTPS
 
-1. Add the domain at your host and copy the DNS records it gives you.
-2. At your registrar: `A` record → the host's IP (apex) and `CNAME` → host
-   hostname (`www`).
-3. Wait for propagation, then enable the host's automatic TLS (Let's Encrypt).
-   On a VPS use `certbot --nginx` for a free certificate and auto-renewal.
-4. Verify HTTPS redirects are on, then set `NEXT_PUBLIC_SITE_URL` to the final
-   `https://` origin **with no trailing slash**, and redeploy so canonicals,
-   sitemap and structured data match.
+1. Add the domain in Vercel's project settings and configure the DNS records it
+   provides at your registrar.
+2. Wait for propagation and verify HTTPS is enabled, then set
+   `NEXT_PUBLIC_SITE_URL` to the final `https://` origin **with no trailing
+   slash**, and redeploy so canonicals, sitemap and structured data match.
 
-### 5. Media
+### 6. Media
 
-- Default: uploads are written to `public/uploads` on the server's disk. Fine on
-  a VPS with persistent storage.
-- Serverless (Vercel/Netlify): configure S3-compatible storage. The upload API
-  switches to S3 automatically when `S3_*` variables are present.
+- Local development: uploads are written to `public/uploads` on disk.
+- Vercel: configure S3-compatible storage. The upload API switches to S3
+  automatically when `S3_*` variables are present.
 - Raster images are converted to WebP and capped at 2000 px wide on upload.
   SVG is stored as-is and served with a restrictive CSP, but never optimised.
 
-### 6. Email
+### 7. Email
 
 Configure SMTP with any transactional provider (Resend, Postmark, SES, Mailgun,
 Zoho, Google Workspace). Verify the sending domain (SPF + DKIM, and DMARC
 recommended) so notifications reach inboxes. Test by submitting the contact form
 and checking both the inbox copy and the enquirer acknowledgement.
 
-### 7. Backups
+### 8. Backups
 
 - Managed Postgres: enable automated daily backups with 7–30 day retention.
 - Manual: `pg_dump "$DATABASE_URL" -Fc -f apronix-$(date +%F).dump`
   and restore with `pg_restore -d "$DATABASE_URL" --clean apronix-….dump`.
-- Back up the media directory (or enable bucket versioning) alongside the database.
-- Store backups off the application server and test a restore before you need it.
+- Enable bucket versioning for media alongside the database backups.
+- Store backups separately and test a restore before you need it.
 
-### 8. Post-launch checklist
+### 9. Post-launch checklist
 
 - [ ] `NEXT_PUBLIC_SITE_URL` matches the live HTTPS origin
 - [ ] `/sitemap.xml` and `/robots.txt` resolve and reference the production domain
