@@ -144,7 +144,6 @@ async function persist(
         Body: buffer,
         ContentType: mimeType,
         CacheControl: 'public, max-age=31536000, immutable',
-        ACL: 'public-read',
       }),
     );
     const base = serverEnv.s3PublicBaseUrl || `${serverEnv.s3Endpoint}/${serverEnv.s3Bucket}`;
