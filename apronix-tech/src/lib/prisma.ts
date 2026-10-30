@@ -3,10 +3,9 @@ import { Prisma, PrismaClient } from '@prisma/client';
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 /**
- * DATABASE_URL wins when set (local Postgres, external providers). On Netlify the
- * managed Netlify Database connection string is injected as NETLIFY_DB_URL.
+ * DATABASE_URL can point to local Postgres or any managed database provider.
  */
-const datasourceUrl = process.env.DATABASE_URL || process.env.NETLIFY_DB_URL || undefined;
+const datasourceUrl = process.env.DATABASE_URL || undefined;
 
 const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
 
@@ -29,9 +28,9 @@ function createClient(): PrismaClient {
   });
   if (!isBuildPhase) return client;
 
-  // On a first deploy Netlify applies database migrations after the build, so
-  // prerendering can run before the tables exist. Render empty states instead of
-  // failing the build; ISR revalidation fills the pages in once data is there.
+  // On a first deploy migrations may run after the build, so prerendering can
+  // run before the tables exist. Render empty states instead of failing the
+  // build; ISR revalidation fills the pages in once data is there.
   return client.$extends({
     query: {
       $allModels: {
