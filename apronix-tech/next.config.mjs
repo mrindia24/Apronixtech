@@ -16,10 +16,14 @@ const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
-      // Add your object-storage host here when S3/R2 is configured
       { protocol: 'https', hostname: '**.amazonaws.com' },
       { protocol: 'https', hostname: '**.r2.cloudflarestorage.com' },
       { protocol: 'https', hostname: '**.public.blob.vercel-storage.com' },
+      {
+        protocol: 'https',
+        hostname: 'pub-e186f8d0c7444c2caf07215dc55442e0.r2.dev',
+        pathname: '/**',
+      },
     ],
   },
   async headers() {
