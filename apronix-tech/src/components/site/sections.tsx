@@ -12,6 +12,14 @@ import {
   ShoppingBag,
   LayoutTemplate,
   Sparkles,
+  CalendarDays,
+  Video,
+  PenLine,
+  ChartNoAxesCombined,
+  UtensilsCrossed,
+  HeartPulse,
+  Store,
+  Building2,
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { Reveal } from '@/src/components/ui/accordion';
@@ -29,6 +37,14 @@ const ICONS: Record<string, typeof Compass> = {
   'shopping-bag': ShoppingBag,
   'layout-template': LayoutTemplate,
   sparkles: Sparkles,
+  calendar: CalendarDays,
+  video: Video,
+  pen: PenLine,
+  chart: ChartNoAxesCombined,
+  utensils: UtensilsCrossed,
+  health: HeartPulse,
+  store: Store,
+  building: Building2,
 };
 
 export function ServiceIcon({ name, className }: { name: string; className?: string }) {

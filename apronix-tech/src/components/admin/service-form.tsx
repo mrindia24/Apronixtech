@@ -152,15 +152,18 @@ export function ServiceContentForm({ service }: { service: ServiceInput }) {
                     Structured sections (JSON)
                   </label>
                   <p className="mb-2 text-[11.5px] leading-relaxed text-white/60">
-                    Arrays of <code className="rounded bg-white/10 px-1">problems</code>,{' '}
+                    Edit <code className="rounded bg-white/10 px-1">problems</code>,{' '}
                     <code className="rounded bg-white/10 px-1">deliverables</code>,{' '}
                     <code className="rounded bg-white/10 px-1">benefits</code>,{' '}
                     <code className="rounded bg-white/10 px-1">workflow</code>,{' '}
-                    <code className="rounded bg-white/10 px-1">useCases</code>,{' '}
-                    <code className="rounded bg-white/10 px-1">faqs</code>, plus optional{' '}
-                    <code className="rounded bg-white/10 px-1">tech</code> and{' '}
-                    <code className="rounded bg-white/10 px-1">startingNote</code>. Invalid JSON will be
-                    rejected on save.
+                    <code className="rounded bg-white/10 px-1">useCases</code> and{' '}
+                    <code className="rounded bg-white/10 px-1">faqs</code>. For Social Media,{' '}
+                    <code className="rounded bg-white/10 px-1">socialServices</code>,{' '}
+                    <code className="rounded bg-white/10 px-1">industries</code> and{' '}
+                    <code className="rounded bg-white/10 px-1">industryMarquee</code> are editable here too.
+                    Optional <code className="rounded bg-white/10 px-1">tech</code> and{' '}
+                    <code className="rounded bg-white/10 px-1">startingNote</code> are also supported.
+                    Invalid JSON will be rejected on save.
                   </p>
                   <textarea
                     id={`sections-${service.key}`}

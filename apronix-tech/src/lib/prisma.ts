@@ -8,6 +8,8 @@ const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 const datasourceUrl = process.env.DATABASE_URL || undefined;
 
 const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
+const isDevelopmentWithoutDatabase = process.env.NODE_ENV === 'development' && !datasourceUrl;
+const developmentReadOperations = new Set(['findMany', 'findFirst', 'findUnique', 'groupBy', 'count']);
 
 /** Missing tables (P2021) or an unreachable / unconfigured database. */
 function isSchemaOrConnectionError(error: unknown): boolean {
@@ -26,7 +28,7 @@ function createClient(): PrismaClient {
     datasourceUrl,
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
   });
-  if (!isBuildPhase) return client;
+  if (!isBuildPhase && !isDevelopmentWithoutDatabase) return client;
 
   // On a first deploy migrations may run after the build, so prerendering can
   // run before the tables exist. Render empty states instead of failing the
@@ -39,7 +41,9 @@ function createClient(): PrismaClient {
             return await query(args);
           } catch (error) {
             if (!isSchemaOrConnectionError(error)) throw error;
-            console.warn(`[prisma:build] database not ready, ${operation} returned empty`);
+            if (isDevelopmentWithoutDatabase && !developmentReadOperations.has(operation)) throw error;
+            const context = isBuildPhase ? 'build' : 'development without DATABASE_URL';
+            console.warn(`[prisma:${context}] database not ready, ${operation} returned empty`);
             return emptyResult(operation);
           }
         },

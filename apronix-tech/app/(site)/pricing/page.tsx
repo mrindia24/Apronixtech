@@ -74,9 +74,9 @@ export default async function PricingPage() {
             >
               <Info size={15} className="mt-0.5 flex-none text-amber-300" aria-hidden="true" />
               <span>
-                <strong className="font-semibold">Placeholder pricing.</strong> The figures below are
-                sample data included with this build so the page structure is visible. Replace them in
-                the dashboard before launch — they are not a quote or an offer.
+                <strong className="font-semibold">Pricing is being finalised.</strong> Unapproved sample
+                figures and deliverables are hidden. Contact us for current pricing, or update and approve
+                plans in the admin dashboard.
               </span>
             </div>
           )}
@@ -107,14 +107,14 @@ export default async function PricingPage() {
                   <article
                     className={cn(
                       'flex h-full flex-col rounded-3xl border p-6 sm:p-7',
-                      plan.highlighted
+                      !plan.isSampleContent && plan.highlighted
                         ? 'border-brand/45 bg-gradient-to-b from-brand/[0.10] to-ink-soft shadow-[0_30px_80px_-40px_rgba(224,31,39,0.8)]'
                         : 'border-white/[0.08] bg-ink-soft',
                     )}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <h2 className="text-[19px] font-semibold text-white">{plan.name}</h2>
-                      {plan.highlighted && (
+                      {!plan.isSampleContent && plan.highlighted && (
                         <span className="mt-0.5 flex-none rounded-full bg-brand px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white">
                           Popular
                         </span>
@@ -130,20 +130,20 @@ export default async function PricingPage() {
                     <div className="mt-5 border-t border-white/[0.07] pt-5">
                       <p className="flex flex-wrap items-baseline gap-1.5">
                         <span className="text-[30px] font-bold leading-none tracking-tight text-white">
-                          {plan.price || 'On request'}
+                          {plan.isSampleContent || !plan.price.trim() ? 'Contact for Pricing' : plan.price}
                         </span>
-                        {plan.priceNote && (
+                        {!plan.isSampleContent && plan.priceNote && (
                           <span className="text-[13px] font-medium text-white/60">{plan.priceNote}</span>
                         )}
                       </p>
-                      {plan.billingNote && (
+                      {!plan.isSampleContent && plan.billingNote && (
                         <p className="mt-2 text-[11.5px] leading-relaxed text-white/55">
                           {plan.billingNote}
                         </p>
                       )}
                     </div>
 
-                    {plan.features.length > 0 && (
+                    {!plan.isSampleContent && plan.features.length > 0 && (
                       <ul className="mt-5 space-y-2.5">
                         {plan.features.map((feature) => (
                           <li key={feature.id} className="flex items-start gap-2.5 text-[13px] leading-relaxed">
@@ -160,7 +160,7 @@ export default async function PricingPage() {
                       </ul>
                     )}
 
-                    {plan.notIncluded.length > 0 && (
+                    {!plan.isSampleContent && plan.notIncluded.length > 0 && (
                       <div className="mt-5 border-t border-white/[0.07] pt-4">
                         <p className="text-[10.5px] font-bold uppercase tracking-[0.14em] text-white/45">
                           Not included
@@ -173,10 +173,14 @@ export default async function PricingPage() {
 
                     <div className="mt-auto pt-6">
                       <Link
-                        href={plan.ctaHref}
+                        href={
+                          plan.serviceKey
+                            ? `/contact?service=${plan.serviceKey}&package=${encodeURIComponent(plan.name)}`
+                            : plan.ctaHref
+                        }
                         className={cn(
                           'inline-flex h-11 w-full items-center justify-center gap-2 rounded-full text-[13.5px] font-semibold transition',
-                          plan.highlighted
+                          !plan.isSampleContent && plan.highlighted
                             ? 'bg-brand text-white hover:bg-brand-dark'
                             : 'border border-white/15 text-white hover:bg-white/[0.07]',
                         )}

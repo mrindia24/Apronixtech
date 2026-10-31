@@ -34,6 +34,7 @@ export function EnquiryForm({
   const successRef = useRef<HTMLDivElement>(null);
 
   const queryService = searchParams.get('service');
+  const queryPackage = searchParams.get('package');
   const initialService =
     defaultService ??
     (queryService && SERVICE_LABELS[queryService] ? queryService : '') ??
@@ -61,6 +62,9 @@ export function EnquiryForm({
       budget: String(data.get('budget') ?? ''),
       timeline: String(data.get('timeline') ?? ''),
       message: String(data.get('message') ?? '').trim(),
+      industry: String(data.get('industry') ?? '').trim(),
+      preferredPackage: String(data.get('preferredPackage') ?? '').trim(),
+      platforms: String(data.get('platforms') ?? '').trim(),
       consent: data.get('consent') === 'on' || data.get('consent') === 'true',
       website: String(data.get('website') ?? ''),
       source,
@@ -248,6 +252,54 @@ export function EnquiryForm({
             autoComplete="organization"
             placeholder="Optional"
             className={fieldClass('company')}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="industry" className="mb-1.5 block text-[12.5px] font-medium text-white/80">
+            Industry
+          </label>
+          <select id="industry" name="industry" defaultValue="" className={cn(fieldClass('industry'), 'pr-9')}>
+            <option value="">Select an industry</option>
+            {[
+              'Food & Hospitality',
+              'Healthcare',
+              'Lifestyle & Retail',
+              'Creative & Professional',
+              'Property & Business',
+              'Other',
+            ].map((industry) => (
+              <option key={industry} value={industry}>{industry}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="preferredPackage" className="mb-1.5 block text-[12.5px] font-medium text-white/80">
+            Preferred package
+          </label>
+          <input
+            id="preferredPackage"
+            name="preferredPackage"
+            type="text"
+            maxLength={120}
+            defaultValue={queryPackage ?? ''}
+            placeholder="Optional"
+            className={fieldClass('preferredPackage')}
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <label htmlFor="platforms" className="mb-1.5 block text-[12.5px] font-medium text-white/80">
+            Preferred platforms
+          </label>
+          <input
+            id="platforms"
+            name="platforms"
+            type="text"
+            maxLength={180}
+            placeholder="Instagram, Facebook, LinkedIn…"
+            className={fieldClass('platforms')}
           />
         </div>
 

@@ -60,6 +60,14 @@ export async function submitEnquiry(input: unknown, meta: { ip: string }): Promi
   }
 
   const data = parsed.data;
+  const message = [
+    data.industry ? `Industry: ${data.industry}` : '',
+    data.preferredPackage ? `Preferred package: ${data.preferredPackage}` : '',
+    data.platforms ? `Platforms: ${data.platforms}` : '',
+    data.message,
+  ]
+    .filter(Boolean)
+    .join('\n\n');
 
   // --- anti-spam -----------------------------------------------------------
   const trap = honeypotTrap(data.website, data.startedAt);
@@ -67,7 +75,7 @@ export async function submitEnquiry(input: unknown, meta: { ip: string }): Promi
     // Behave like a success for bots (no signal), but never persist the record.
     return { ok: true, reference: 'ignored', emailSent: false };
   }
-  if (looksLikeLinkSpam(data.message)) {
+  if (looksLikeLinkSpam(message)) {
     return {
       ok: false,
       status: 400,
@@ -121,7 +129,7 @@ export async function submitEnquiry(input: unknown, meta: { ip: string }): Promi
         serviceRef: service?.id ?? null,
         budget: data.budget || null,
         timeline: data.timeline || null,
-        message: data.message,
+        message,
         consent: data.consent,
         source: (data.source as LeadSource) ?? 'CONTACT_PAGE',
         landingPage: data.landingPage || null,

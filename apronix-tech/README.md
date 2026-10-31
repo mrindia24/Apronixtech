@@ -28,6 +28,7 @@ PostgreSQL · Prisma · Zod.
 ```bash
 # 1. Install
 npm install
+#    Prisma Client is generated automatically during installation and before dev starts.
 
 # 2. Configure
 cp .env.example .env
@@ -42,13 +43,17 @@ npm run db:seed             # services, FAQs, sample projects/articles, first ad
 npm run dev                 # http://localhost:3000
 ```
 
+If `DATABASE_URL` is not set, the development server can still render public
+pages, but database-backed sections are empty and database writes will fail.
+Configure PostgreSQL and run the migration and seed steps above to use the CMS.
+
 Sign in at **/admin/login** with `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
 
 ### Useful scripts
 
 | Command | Purpose |
 | --- | --- |
-| `npm run dev` | Development server |
+| `npm run dev` | Generate Prisma Client and start the development server |
 | `npm run build` | Production build (runs `prisma generate`) |
 | `npm start` | Serve the production build |
 | `npm run typecheck` | `tsc --noEmit` |

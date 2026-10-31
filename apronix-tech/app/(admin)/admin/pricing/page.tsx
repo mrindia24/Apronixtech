@@ -39,8 +39,7 @@ export default async function AdminPricingPage() {
           <Info size={15} className="mt-0.5 flex-none text-amber-300" aria-hidden="true" />
           <span>
             <strong className="font-semibold">{sampleCount} plan(s) still contain placeholder figures.</strong>{' '}
-            The public page shows a “placeholder pricing” notice until every plan has been saved once.
-            Editing and saving a plan clears its sample flag.
+              The public page hides unapproved figures and deliverables. Review each plan and explicitly confirm it before publication.
           </span>
         </div>
       )}

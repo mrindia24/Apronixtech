@@ -62,6 +62,12 @@ export const PAGE_KEYWORDS = {
     'social media marketing agency in Rajasthan',
     'social media agency in India',
     'social media management packages in India',
+    'social media management for restaurants',
+    'social media management for hotels',
+    'social media marketing for hospitals',
+    'social media marketing for real estate',
+    'social media management for small businesses',
+    'content creation and social media management',
   ],
   shopify: [
     'Shopify website development',

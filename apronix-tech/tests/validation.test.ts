@@ -21,6 +21,28 @@ describe('leadSchema', () => {
     if (result.success) expect(result.data.email).toBe('priya@brightleaf.in');
   });
 
+  it('accepts bounded social media enquiry details', () => {
+    const result = leadSchema.safeParse({
+      ...validLead,
+      service: 'SOCIAL_MEDIA_MANAGEMENT',
+      industry: 'Food & Hospitality',
+      preferredPackage: 'Social Growth',
+      platforms: 'Instagram, Facebook',
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.industry).toBe('Food & Hospitality');
+      expect(result.data.preferredPackage).toBe('Social Growth');
+      expect(result.data.platforms).toBe('Instagram, Facebook');
+    }
+  });
+
+  it('rejects oversized social media enquiry details', () => {
+    expect(
+      leadSchema.safeParse({ ...validLead, preferredPackage: 'a'.repeat(121) }).success,
+    ).toBe(false);
+  });
+
   it('rejects a malformed email', () => {
     const result = leadSchema.safeParse({ ...validLead, email: 'not-an-email' });
     expect(result.success).toBe(false);
