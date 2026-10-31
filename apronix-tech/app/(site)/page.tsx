@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { HeroVisual } from '@/src/components/site/hero-visual';
 import { TechnologySlider } from '@/src/components/site/technology-slider';
+import { TeamSection } from '@/src/components/site/team-section';
 import {
   CtaBand,
   ProcessTimeline,
@@ -359,6 +360,8 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      <TeamSection />
 
       {/* ------------------------------------------------------------ process */}
       <section className="section border-t border-white/[0.07] bg-ink-soft/40" aria-labelledby="process-heading">

@@ -73,6 +73,7 @@ export async function Footer() {
             <ul className="mt-4 space-y-2.5 text-[13.5px]">
               {[
                 { label: 'About us', href: '/about' },
+                { label: 'Our team', href: '/team' },
                 { label: 'Our work', href: '/work' },
                 { label: 'Pricing', href: '/pricing' },
                 { label: 'Blog', href: '/blog' },

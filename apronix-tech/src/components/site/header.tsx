@@ -10,6 +10,7 @@ import { Logo } from '@/src/components/site/logo';
 
 const LINKS = [
   { label: 'About', href: '/about' },
+  { label: 'Our Team', href: '/team' },
   { label: 'Services', href: '/services', children: true },
   { label: 'Work', href: '/work' },
   { label: 'Pricing', href: '/pricing' },
