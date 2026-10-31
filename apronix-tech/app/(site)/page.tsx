@@ -1,7 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Check, Star } from 'lucide-react';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  Star,
+} from 'lucide-react';
 import { HeroVisual } from '@/src/components/site/hero-visual';
+import { TechnologySlider } from '@/src/components/site/technology-slider';
 import {
   CtaBand,
   ProcessTimeline,
@@ -17,6 +23,7 @@ import {
   getApprovedTestimonials,
   getFaqs,
   getFeaturedProjects,
+  getProjects,
   getServices,
   getBlogPosts,
 } from '@/src/lib/content';
@@ -36,15 +43,30 @@ export const metadata: Metadata = buildMetadata({
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [services, featuredProjects, posts, faqs, testimonials, settings] = await Promise.all([
+  const [services, featuredProjects, projects, posts, faqs, testimonials, settings] = await Promise.all([
     getServices(),
     getFeaturedProjects(3),
+    getProjects(),
     getBlogPosts({ perPage: 3 }),
     getFaqs(null),
     getApprovedTestimonials(),
     getSiteSettings(),
   ]);
 
+  const publishedClients = Array.from(
+    new Map(
+      projects.flatMap((project) => {
+        const name = project.clientName?.trim();
+        if (project.isSampleContent || !name) return [];
+        return [
+          [
+            name.toLocaleLowerCase(),
+            { name, detail: project.industry || project.categoryLabel },
+          ] as const,
+        ];
+      }),
+    ).values(),
+  );
   const faqLd = faqSchema(faqs.map((f) => ({ question: f.question, answer: f.answer })));
   const showTestimonials = settings.showTestimonials && testimonials.length > 0;
 
@@ -133,6 +155,65 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {publishedClients.length > 0 && (
+        <section
+          aria-labelledby="client-work-heading"
+          className="overflow-hidden border-y border-white/[0.07] bg-ink-soft/60 py-7 sm:py-8"
+        >
+          <div className="shell">
+            <div className="mb-5 flex items-center justify-between gap-4 sm:mb-6">
+              <div>
+                <h2
+                  id="client-work-heading"
+                  className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/55 sm:text-[11px]"
+                >
+                  Selected client work
+                </h2>
+                <p className="mt-1 text-[12px] text-white/75 sm:text-[13px]">
+                  Real projects, published with permission.
+                </p>
+              </div>
+              <Link
+                href="/work"
+                className="inline-flex min-h-[44px] flex-none items-center gap-1.5 text-[12px] font-semibold text-white/75 transition hover:text-brand-soft sm:text-[13px]"
+              >
+                View work
+                <ArrowRight size={13} aria-hidden="true" />
+              </Link>
+            </div>
+
+            <div className="mask-fade-r overflow-hidden">
+              <div className="flex w-max animate-marquee motion-reduce:animate-none">
+                {[false, true].map((isDuplicate) => (
+                  <ul
+                    key={String(isDuplicate)}
+                    aria-hidden={isDuplicate || undefined}
+                    className="flex shrink-0 items-center gap-3 pr-3"
+                  >
+                    {publishedClients.map((client) => (
+                      <li
+                        key={`${isDuplicate ? 'copy-' : ''}${client.name}`}
+                        className="flex min-h-[58px] items-center gap-3 rounded-xl border border-white/[0.09] bg-white/[0.025] px-4 sm:min-h-[64px] sm:px-5"
+                      >
+                        <span className="h-2 w-2 flex-none rounded-full bg-brand" aria-hidden="true" />
+                        <span className="whitespace-nowrap">
+                          <span className="block text-[13px] font-semibold text-white sm:text-[14px]">
+                            {client.name}
+                          </span>
+                          <span className="mt-0.5 block text-[10px] text-white/55 sm:text-[11px]">
+                            {client.detail}
+                          </span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* -------------------------------------------------------------- trust */}
       <section aria-labelledby="capabilities-heading" className="border-y border-white/[0.07] bg-ink-soft/60">
         <div className="shell py-8">
@@ -186,6 +267,32 @@ export default async function HomePage() {
           />
           <div className="mt-10">
             <ServiceCards services={services} />
+          </div>
+        </div>
+      </section>
+
+      {/* -------------------------------------------------------- technologies */}
+      <section
+        className="border-y border-white/[0.07] bg-ink-soft/40 py-14 sm:py-16 lg:py-20"
+        aria-labelledby="technology-heading"
+      >
+        <div className="shell">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow">
+              <span className="dot" aria-hidden="true" />
+              The toolkit
+            </p>
+            <h2 id="technology-heading" className="mt-4 text-display-md text-white">
+              Built with tools that fit the job.
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-[14px] leading-relaxed text-mute-onDark sm:text-[15px]">
+              From flexible storefronts to easy-to-manage websites, we choose proven platforms
+              that make your next step simpler.
+            </p>
+          </div>
+
+          <div className="mt-8 sm:mt-10">
+            <TechnologySlider />
           </div>
         </div>
       </section>
