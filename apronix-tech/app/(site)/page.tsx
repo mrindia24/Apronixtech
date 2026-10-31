@@ -1,12 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Check,
-  Star,
-} from 'lucide-react';
-import { HeroVisual } from '@/src/components/site/hero-visual';
+import { ArrowRight, ArrowUpRight, Check, Star } from 'lucide-react';
+import { HeroTextRotator } from '@/src/components/site/hero-text-rotator';
+import { HeroTechFloaters } from '@/src/components/site/hero-tech-floaters';
 import { TechnologySlider } from '@/src/components/site/technology-slider';
 import { TeamSection } from '@/src/components/site/team-section';
 import {
@@ -84,73 +80,61 @@ export default async function HomePage() {
           className="pointer-events-none absolute -right-40 -top-40 h-[620px] w-[620px] rounded-full bg-[radial-gradient(circle,rgba(255,48,56,0.20),transparent_65%)] blur-2xl"
           aria-hidden="true"
         />
-        <div className="shell relative pb-20 pt-12 sm:pb-24 sm:pt-16 lg:pb-28 lg:pt-20">
-          <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
-            <div>
-              <Reveal>
-                <p className="eyebrow">
-                  <span className="dot" aria-hidden="true" />
-                  Social · Shopify · WordPress
-                </p>
-              </Reveal>
+        <div className="shell relative pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-24 lg:pt-24">
+          <div className="mx-auto max-w-5xl text-center">
+            <Reveal>
+              <p className="eyebrow justify-center">
+                <span className="dot" aria-hidden="true" />
+                Social · Shopify · WordPress
+              </p>
+            </Reveal>
 
-              <Reveal delay={60}>
-                <h1 className="mt-5 text-display-xl text-white">
-                  Make your brand
-                  <br />
-                  <span className="text-white/70">impossible to</span>{' '}
-                  <span className="relative inline-block">
-                    ignore.
-                    <span
-                      aria-hidden="true"
-                      className="absolute -bottom-1 left-0 h-[3px] w-full rounded-full bg-gradient-to-r from-brand via-brand to-transparent"
-                    />
-                  </span>
-                </h1>
-              </Reveal>
+            <HeroTechFloaters />
 
-              <Reveal delay={120}>
-                <p className="mt-6 max-w-xl text-[15.5px] leading-relaxed text-mute-onDark text-pretty">
-                  We help ambitious businesses grow through strategic social media management and
-                  high-performing Shopify and WordPress websites.
-                </p>
-              </Reveal>
+            <Reveal delay={60}>
+              <h1 className="mt-3 text-[clamp(1.65rem,9vw,5.75rem)] font-semibold leading-[0.95] tracking-[-0.035em] text-white sm:mt-4 sm:text-display-xl">
+                <span className="block">Make your brand</span>
+                <HeroTextRotator />
+              </h1>
+            </Reveal>
 
-              <Reveal delay={180}>
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <Link
-                    href="/contact"
-                    className="inline-flex h-[52px] items-center justify-center gap-2 rounded-full bg-brand px-7 text-[14.5px] font-semibold text-white shadow-[0_16px_44px_-18px_rgba(255,48,56,0.95)] transition hover:bg-brand-dark active:scale-[0.99]"
-                  >
-                    Book a free consultation
-                    <ArrowUpRight size={16} aria-hidden="true" />
-                  </Link>
-                  <Link
-                    href="/work"
-                    className="inline-flex h-[52px] items-center justify-center gap-2 rounded-full border border-white/15 px-7 text-[14.5px] font-semibold text-white transition hover:border-white/30 hover:bg-white/[0.06]"
-                  >
-                    Explore our work
-                    <ArrowRight size={16} aria-hidden="true" />
-                  </Link>
-                </div>
-              </Reveal>
+            <Reveal delay={120}>
+              <p className="mx-auto mt-6 max-w-2xl text-[15.5px] leading-relaxed text-mute-onDark text-pretty">
+                We help ambitious businesses grow through strategic social media management and
+                high-performing Shopify and WordPress websites.
+              </p>
+            </Reveal>
 
-              <Reveal delay={240}>
-                <ul className="mt-9 flex flex-wrap gap-x-5 gap-y-2.5">
-                  {['No obligation consultation', 'Clear fixed-fee scopes', 'Reply within one business day'].map(
-                    (item) => (
-                      <li key={item} className="inline-flex items-center gap-1.5 text-[12.5px] text-white/60">
-                        <Check size={13} className="text-brand-soft" aria-hidden="true" />
-                        {item}
-                      </li>
-                    ),
-                  )}
-                </ul>
-              </Reveal>
-            </div>
+            <Reveal delay={180}>
+              <div className="mt-7 flex flex-col justify-center gap-3 sm:mt-8 sm:flex-row sm:items-center">
+                <Link
+                  href="/contact"
+                  className="inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-full bg-brand px-7 text-[14.5px] font-semibold text-white shadow-[0_16px_44px_-18px_rgba(255,48,56,0.95)] transition hover:bg-brand-dark active:scale-[0.99] sm:w-auto"
+                >
+                  Book a free consultation
+                  <ArrowUpRight size={16} aria-hidden="true" />
+                </Link>
+                <Link
+                  href="/work"
+                  className="inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-full border border-white/15 px-7 text-[14.5px] font-semibold text-white transition hover:border-white/30 hover:bg-white/[0.06] sm:w-auto"
+                >
+                  Explore our work
+                  <ArrowRight size={16} aria-hidden="true" />
+                </Link>
+              </div>
+            </Reveal>
 
-            <Reveal delay={140} className="relative pb-8 lg:pb-0">
-              <HeroVisual />
+            <Reveal delay={240}>
+              <ul className="mt-9 flex flex-wrap justify-center gap-x-5 gap-y-2.5">
+                {['No obligation consultation', 'Clear fixed-fee scopes', 'Reply within one business day'].map(
+                  (item) => (
+                    <li key={item} className="inline-flex items-center gap-1.5 text-[12.5px] text-white/60">
+                      <Check size={13} className="text-brand-soft" aria-hidden="true" />
+                      {item}
+                    </li>
+                  ),
+                )}
+              </ul>
             </Reveal>
           </div>
         </div>
