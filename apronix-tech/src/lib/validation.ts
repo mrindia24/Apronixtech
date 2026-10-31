@@ -62,6 +62,9 @@ export const leadSchema = z.object({
   ]),
   budget: z.string().trim().max(80).optional().or(z.literal('')),
   timeline: z.string().trim().max(80).optional().or(z.literal('')),
+  industry: z.string().trim().max(120).optional().or(z.literal('')),
+  preferredPackage: z.string().trim().max(120).optional().or(z.literal('')),
+  platforms: z.string().trim().max(180).optional().or(z.literal('')),
   message: z
     .string()
     .trim()

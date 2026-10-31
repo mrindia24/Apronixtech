@@ -23,11 +23,13 @@ import {
   getProjects,
   getServices,
   getBlogPosts,
+  getPricingPlans,
 } from '@/src/lib/content';
 import { getSiteSettings } from '@/src/lib/settings';
 import { buildMetadata, faqSchema } from '@/src/lib/seo';
 import { PAGE_KEYWORDS } from '@/src/lib/keywords';
 import { CAPABILITIES } from '@/src/lib/constants';
+import { SocialMediaHomeShowcase } from '@/src/components/site/social-media-experience';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Apronix Tech — Social Media, Shopify & WordPress Development',
@@ -40,7 +42,7 @@ export const metadata: Metadata = buildMetadata({
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [services, featuredProjects, projects, posts, faqs, testimonials, settings] = await Promise.all([
+  const [services, featuredProjects, projects, posts, faqs, testimonials, settings, pricingPlans] = await Promise.all([
     getServices(),
     getFeaturedProjects(3),
     getProjects(),
@@ -48,6 +50,7 @@ export default async function HomePage() {
     getFaqs(null),
     getApprovedTestimonials(),
     getSiteSettings(),
+    getPricingPlans(),
   ]);
 
   const publishedClients = Array.from(
@@ -255,6 +258,11 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <SocialMediaHomeShowcase
+        service={services.find((service) => service.key === 'SOCIAL_MEDIA_MANAGEMENT')}
+        plans={pricingPlans}
+      />
 
       {/* -------------------------------------------------------- technologies */}
       <section

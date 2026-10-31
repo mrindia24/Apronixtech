@@ -107,10 +107,23 @@ export function PricingPlanEditor({ plan }: { plan?: PricingPlanRow }) {
               />
             </Field>
 
+            <label className="flex items-start gap-2 rounded-xl border border-amber-400/20 bg-amber-400/[0.05] p-3 text-[12px] leading-relaxed text-white/75">
+              <input
+                type="checkbox"
+                name="pricingApproved"
+                defaultChecked={plan ? !plan.isSampleContent : false}
+                className="mt-0.5 h-4 w-4 flex-none accent-[#E01F27]"
+              />
+              <span>
+                I confirm the price, billing terms, platforms and deliverables above are approved for public display.
+                Unchecked plans show “Contact for Pricing” and hide their deliverables.
+              </span>
+            </label>
+
             <Field
               label="Features"
               name={`features-${uid}`}
-              hint="One per line. Start a line with “-” to show it as not included."
+              hint="One per line. Include quantities, platforms and revision terms. Start a line with “-” to show it as not included."
               error={state.errors?.features}
             >
               <textarea

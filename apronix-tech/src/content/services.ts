@@ -13,6 +13,9 @@ export type ServiceSections = {
   workflow: { step: string; title: string; body: string }[];
   useCases: string[];
   faqs: { question: string; answer: string }[];
+  socialServices?: { title: string; body: string; icon: string }[];
+  industries?: { name: string; examples: string[]; icon: string }[];
+  industryMarquee?: string[];
   relatedKeys?: ServiceKey[];
   tech?: string[];
   startingNote?: string;
@@ -44,9 +47,9 @@ export const SERVICE_SEED: ServiceSeed[] = [
     tagline: 'A consistent, recognisable brand presence — planned, produced and published.',
     summary:
       'We plan, design, write and publish your social content, manage your community, and report on what is actually working.',
-    heroHeadline: 'Show up consistently, with content worth stopping for.',
+    heroHeadline: 'Your Brand Deserves More Than Just Posting.',
     heroDescription:
-      'Most brands do not have a content problem — they have a consistency problem. We take the planning, design, editing, scheduling and community replies off your plate, and build a rhythm your audience can rely on.',
+      'We plan, create, manage, and optimise your social media presence so you can focus on running your business while we take care of your digital growth.',
     icon: 'megaphone',
     accent: '#FF3038',
     order: 1,
@@ -76,6 +79,24 @@ export const SERVICE_SEED: ServiceSeed[] = [
           body: 'Enquiries sit in message requests for days. Every unanswered question is a customer who found a competitor instead.',
         },
       ],
+      socialServices: [
+        { title: 'Social Media Strategy', body: 'Audience, competitor and channel research shaped around your business goals.', icon: 'compass' },
+        { title: 'Content Calendar Planning', body: 'A practical monthly plan with themes, formats, timing and campaign ideas.', icon: 'calendar' },
+        { title: 'Reels & Short-Form Video Editing', body: 'Platform-ready edits from footage you provide, with clear scope agreed up front.', icon: 'video' },
+        { title: 'Graphic Design & Carousels', body: 'On-brand graphics and carousels built to explain, inform and invite action.', icon: 'layers' },
+        { title: 'Caption & Hashtag Research', body: 'Clear copy and relevant hashtag research for each planned post.', icon: 'pen' },
+        { title: 'Account Management', body: 'Scheduling and publishing across the platforms agreed in your package.', icon: 'smartphone' },
+        { title: 'Community Engagement', body: 'Comment and message support where included in your agreed scope.', icon: 'message-square' },
+        { title: 'Performance Analytics & Reporting', body: 'A plain-English review of available analytics and recommendations for the next cycle.', icon: 'chart' },
+      ],
+      industries: [
+        { name: 'Food & Hospitality', examples: ['Cafés', 'Restaurants', 'Hotels', 'Resorts', 'Bakeries', 'Cloud kitchens'], icon: 'utensils' },
+        { name: 'Healthcare', examples: ['Hospitals', 'Clinics', 'Dental clinics', 'Diagnostic centres', 'Wellness centres'], icon: 'health' },
+        { name: 'Lifestyle & Retail', examples: ['Shopping stores', 'Clothing stores', 'Fashion brands', 'Jewellery stores', 'Beauty brands', 'Salons'], icon: 'store' },
+        { name: 'Creative & Professional', examples: ['Photography studios', 'Fitness studios', 'Gyms', 'Educational institutes', 'Event companies', 'Professional services'], icon: 'sparkles' },
+        { name: 'Property & Business', examples: ['Real estate agencies', 'Property developers', 'Construction companies', 'Interior designers', 'Local businesses', 'Startups'], icon: 'building' },
+      ],
+      industryMarquee: ['CAFE', 'HOTEL', 'HOSPITAL', 'REAL ESTATE', 'RETAIL', 'FITNESS', 'FASHION', 'RESTAURANT', 'STUDIO', 'HEALTHCARE'],
       deliverables: [
         {
           title: 'Strategy & positioning',
@@ -139,14 +160,21 @@ export const SERVICE_SEED: ServiceSeed[] = [
         'A retailer that already has footage and photos but no editing or publishing system.',
       ],
       workflow: [
-        { step: '01', title: 'Audit & strategy', body: 'We review your current channels, competitors and customer questions, then agree content pillars and cadence.' },
-        { step: '02', title: 'Calendar approval', body: 'You receive a monthly calendar with concepts and captions. Nothing is produced until that is signed off.' },
-        { step: '03', title: 'Production', body: 'Design and editing happen in batches, with your brand system applied consistently.' },
-        { step: '04', title: 'Scheduling', body: 'Approved content is scheduled to each platform at times that suit your audience.' },
-        { step: '05', title: 'Community management', body: 'We monitor comments and DMs during agreed hours, escalating sales conversations to you.' },
-        { step: '06', title: 'Report & refine', body: 'A monthly report closes the loop and informs the next calendar.' },
+        { step: '01', title: 'Discovery & business understanding', body: 'We learn about your business, audience, services, competitors, brand personality and marketing objectives.' },
+        { step: '02', title: 'Social media audit & strategy', body: 'We review your profiles, identify opportunities and prepare a strategy shaped around your goals.' },
+        { step: '03', title: 'Content planning', body: 'We prepare a monthly calendar with topics, creative direction, posting schedule and content formats.' },
+        { step: '04', title: 'Creative production', body: 'We create the agreed reels, videos, graphics, carousels and captions in batches.' },
+        { step: '05', title: 'Client review & approval', body: 'You review the planned content, share consolidated feedback within the agreed revision rounds, and approve it before publishing.' },
+        { step: '06', title: 'Scheduling & publishing', body: 'Only approved content is scheduled and published using the agreed platform access.' },
+        { step: '07', title: 'Community management', body: 'Where included in your package, we respond to comments and messages during the agreed service hours.' },
+        { step: '08', title: 'Performance reporting', body: 'We review available analytics, share the results and recommend improvements for the next content cycle.' },
       ],
       faqs: [
+        {
+          question: 'What does social media management include?',
+          answer:
+            'Depending on the approved package, we can cover strategy, content calendars, creative production, captions, scheduling, publishing, community support and performance reporting. The written scope lists the exact platforms, quantities and responsibilities.',
+        },
         {
           question: 'How many posts are included each month?',
           answer:
@@ -156,6 +184,11 @@ export const SERVICE_SEED: ServiceSeed[] = [
           question: 'Do we need to send you raw footage?',
           answer:
             'If you can, yes — footage of your team, products or process makes the strongest short-form content. If you cannot, we can build a graphic-led calendar instead. We will tell you honestly which approach suits your category.',
+        },
+        {
+          question: 'Do you create Instagram Reels?',
+          answer:
+            'Yes. Reels and other short-form edits can be included in the monthly scope. The number of edits, source footage requirements and any on-location production are confirmed before work begins.',
         },
         {
           question: 'Who responds to comments and DMs?',
@@ -171,6 +204,30 @@ export const SERVICE_SEED: ServiceSeed[] = [
           question: 'Can you work with our in-house designer?',
           answer:
             'Yes. We can hand over approved calendars for your team to produce, or take design in-house only while you hire. Roles are written into the scope so nothing falls between the gaps.',
+        },
+        {
+          question: 'Which social media platforms do you manage?',
+          answer: 'Platform access and management are agreed during scoping. We commonly plan for Instagram, Facebook and LinkedIn, and confirm the exact channels in your written package.',
+        },
+        {
+          question: 'Do you provide content calendars and an approval process?',
+          answer: 'Yes. We share a monthly calendar and creative for your review before anything is published. The scope confirms feedback timelines and included revision rounds.',
+        },
+        {
+          question: 'Can you manage multiple business locations?',
+          answer: 'We can scope multi-location work after reviewing the number of profiles, local content needs and approval contacts. The platforms and responsibilities are confirmed in writing.',
+        },
+        {
+          question: 'Are photography, video shoots or advertising budgets included?',
+          answer: 'On-location shoots and paid advertising budgets are not assumed to be included. Any production, travel or media spend is discussed and listed separately in your written scope.',
+        },
+        {
+          question: 'Can we choose a customised monthly package?',
+          answer: 'Yes. We can tailor the platforms, content formats, community support and reporting to your needs. Contact us for a scoped quote and current package pricing.',
+        },
+        {
+          question: 'How do we get started?',
+          answer: 'Send an enquiry with your business, goals and preferred platforms. We will review the details, arrange a conversation if useful and confirm a written scope before work begins.',
         },
       ],
       relatedKeys: ['SHOPIFY_DEVELOPMENT', 'WORDPRESS_DEVELOPMENT'],

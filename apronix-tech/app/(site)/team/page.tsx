@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowDown, ArrowUpRight, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, Plus, Sparkles } from 'lucide-react';
 import { Breadcrumbs } from '@/src/components/site/breadcrumbs';
 import { TeamHeroCard } from '@/src/components/site/team-hero-card';
 import { TEAM_MEMBERS } from '@/src/lib/team';
@@ -157,6 +157,43 @@ export default function TeamPage() {
                   </p>
                 </div>
               </article>
+            ))}
+            {[1, 2].map((cardNumber) => (
+              <Link
+                key={`next-you-${cardNumber}`}
+                href="/contact"
+                aria-label={`Join the Apronix Tech team — your place could be next, card ${cardNumber}`}
+                className="group relative flex flex-col overflow-hidden rounded-3xl border border-dashed border-white/20 bg-ink-soft/60 transition duration-300 hover:-translate-y-1 hover:border-brand/50 hover:bg-ink-soft"
+              >
+                <div className="relative flex aspect-[4/5] flex-col items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_50%_42%,rgba(255,48,56,0.12),transparent_58%)] px-6 text-center">
+                  <span className="grid h-16 w-16 place-items-center rounded-full border border-brand/30 bg-brand/[0.08] text-brand-soft transition duration-300 group-hover:scale-105 group-hover:bg-brand/15">
+                    <Plus size={28} strokeWidth={1.5} aria-hidden="true" />
+                  </span>
+                  <span className="mt-5 text-[11px] font-bold uppercase tracking-[0.2em] text-brand-soft">
+                    Your place could be
+                  </span>
+                  <span className="mt-2 text-[28px] font-semibold tracking-[-0.03em] text-white sm:text-[32px]">
+                    Next You
+                  </span>
+                  <span className="mt-3 max-w-[220px] text-[12px] leading-relaxed text-mute-onDark">
+                    Bring your ideas and skills to the Apronix Tech team.
+                  </span>
+                </div>
+                <div className="relative border-t border-white/[0.07] p-5">
+                  <span className="absolute left-5 top-0 h-[2px] w-9 -translate-y-1/2 bg-brand transition-all duration-300 group-hover:w-14" aria-hidden="true" />
+                  <span className="flex items-center justify-between gap-3">
+                    <span>
+                      <span className="block text-[18px] font-bold tracking-[-0.025em] text-white">Next You</span>
+                      <span className="mt-1.5 block text-[13px] leading-relaxed text-mute-onDark">
+                        Let&apos;s create something meaningful.
+                      </span>
+                    </span>
+                    <span className="grid h-9 w-9 flex-none place-items-center rounded-full border border-white/10 bg-white/[0.04] text-white/60 transition-colors group-hover:border-brand/40 group-hover:text-brand-soft">
+                      <ArrowUpRight size={15} aria-hidden="true" />
+                    </span>
+                  </span>
+                </div>
+              </Link>
             ))}
           </div>
         </div>

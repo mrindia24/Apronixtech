@@ -531,8 +531,7 @@ export async function savePricingPlanAction(
     notIncluded,
     order: data.order,
     status: data.status,
-    // Once the agency edits a plan the figures are theirs, not sample data.
-    isSampleContent: false,
+    isSampleContent: formData.get('pricingApproved') !== 'on',
   };
 
   try {

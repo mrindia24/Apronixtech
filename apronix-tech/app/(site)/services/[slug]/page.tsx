@@ -10,10 +10,12 @@ import { ProjectCard } from '@/src/components/site/project-card';
 import { Suspense } from 'react';
 import { EnquiryForm } from '@/src/components/site/enquiry-form';
 import { FormSkeleton } from '@/src/components/site/form-skeleton';
-import { getServiceBySlug, getServices, getFaqs, getProjects } from '@/src/lib/content';
+import { getServiceBySlug, getServices, getFaqs, getProjects, getPricingPlans } from '@/src/lib/content';
 import { getSiteSettings } from '@/src/lib/settings';
 import { buildMetadata, breadcrumbSchema, faqSchema, serviceSchema } from '@/src/lib/seo';
 import { PAGE_KEYWORDS } from '@/src/lib/keywords';
+import { SocialMediaLandingPage } from '@/src/components/site/social-media-experience';
+import { SERVICE_SEED } from '@/src/content/services';
 
 const SERVICE_IMAGES: Record<string, { src: string; alt: string }> = {
   SOCIAL_MEDIA_MANAGEMENT: {
@@ -67,11 +69,12 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   const service = await getServiceBySlug(slug);
   if (!service) notFound();
 
-  const [allServices, scopedFaqs, projects, settings] = await Promise.all([
+  const [allServices, scopedFaqs, projects, settings, pricingPlans] = await Promise.all([
     getServices(),
     getFaqs(service.key),
     getProjects(),
     getSiteSettings(),
+    getPricingPlans(),
   ]);
 
   const relatedProjects = projects
@@ -95,6 +98,47 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
     { name: 'Services', href: '/services' },
     { name: service.shortName, href: `/services/${service.slug}` },
   ];
+
+  if (service.key === 'SOCIAL_MEDIA_MANAGEMENT') {
+    const socialFaqs = Array.from(
+      new Map(
+        [...faqItems, ...(SERVICE_SEED.find((seed) => seed.key === service.key)?.sections.faqs ?? []).map((faq, index) => ({
+          id: `service-faq-${index}`,
+          question: faq.question,
+          answer: faq.answer,
+        }))].map((faq) => [faq.question.trim().toLowerCase(), faq]),
+      ).values(),
+    );
+
+    return (
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(
+              [
+                breadcrumbSchema(crumbs),
+                serviceSchema({
+                  name: service.name,
+                  description: service.summary,
+                  path: `/services/${service.slug}`,
+                  serviceType: service.shortName,
+                }),
+                faqSchema(socialFaqs.map(({ question, answer }) => ({ question, answer }))),
+              ].filter(Boolean),
+            ),
+          }}
+        />
+        <SocialMediaLandingPage
+          service={service}
+          plans={pricingPlans}
+          projects={projects}
+          faqs={socialFaqs}
+          settings={settings}
+        />
+      </>
+    );
+  }
 
   return (
     <>

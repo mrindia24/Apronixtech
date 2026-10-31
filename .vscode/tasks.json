@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Apronix Tech: Run development server",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"--prefix",
+				"apronix-tech",
+				"run",
+				"dev"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

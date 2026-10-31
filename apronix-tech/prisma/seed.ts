@@ -589,6 +589,25 @@ const PRICING_SEED: PlanSeed[] = [
     notIncluded: ['Paid ad management'],
   },
   {
+    name: 'Social Premium',
+    tagline: 'A broader social media partnership scoped to your platforms and priorities.',
+    price: '',
+    priceNote: 'per month',
+    billingNote: 'Scope and terms confirmed in a written proposal',
+    serviceKey: 'SOCIAL_MEDIA_MANAGEMENT',
+    highlighted: false,
+    features: [
+      'Advanced content strategy',
+      'Higher-volume reels and video content (quantity agreed in scope)',
+      'Graphic posts and carousels',
+      'Campaign planning',
+      'Community management where agreed',
+      'Multi-platform content management',
+      'Performance tracking and monthly strategy review',
+    ],
+    notIncluded: ['Paid advertising budget', 'On-location production and travel unless separately scoped'],
+  },
+  {
     name: 'Shopify Launch',
     tagline: 'A store foundation built to be extended, not rebuilt in a year.',
     price: '₹1,20,000',
@@ -646,13 +665,14 @@ const PRICING_SEED: PlanSeed[] = [
 ];
 
 async function seedPricing() {
-  const existing = await prisma.pricingPlan.count();
-  if (existing > 0) {
-    console.log('• Pricing plans already present — left untouched');
-    return;
-  }
-
+  let created = 0;
   for (const [index, plan] of PRICING_SEED.entries()) {
+    const existing = await prisma.pricingPlan.findFirst({
+      where: { name: plan.name, serviceKey: plan.serviceKey },
+      select: { id: true },
+    });
+    if (existing) continue;
+
     await prisma.pricingPlan.create({
       data: {
         name: plan.name,
@@ -672,8 +692,13 @@ async function seedPricing() {
         },
       },
     });
+    created += 1;
   }
-  console.log(`• Seeded ${PRICING_SEED.length} placeholder pricing plans (clearly labelled)`);
+  console.log(
+    created
+      ? `• Added ${created} missing placeholder pricing plan(s) (clearly labelled)`
+      : '• Pricing plans already present — left untouched',
+  );
 }
 
 async function seedSettings() {

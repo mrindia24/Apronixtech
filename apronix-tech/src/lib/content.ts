@@ -2,7 +2,7 @@ import 'server-only';
 import { unstable_cache } from 'next/cache';
 import type { Prisma, ServiceKey } from '@prisma/client';
 import { prisma } from '@/src/lib/prisma';
-import type { ServiceSections } from '@/src/content/services';
+import { SERVICE_SEED, type ServiceSections } from '@/src/content/services';
 import { PUBLIC_STATUS } from '@/src/lib/constants';
 
 /**
@@ -44,6 +44,25 @@ export const getServices = unstable_cache(
       where: { status: 'PUBLISHED' },
       orderBy: [{ order: 'asc' }, { name: 'asc' }],
     });
+    if (!rows.length && process.env.NODE_ENV === 'development' && !process.env.DATABASE_URL) {
+      return SERVICE_SEED.map((service) => ({
+        id: service.key,
+        key: service.key,
+        slug: service.slug,
+        name: service.name,
+        shortName: service.shortName,
+        tagline: service.tagline,
+        summary: service.summary,
+        heroHeadline: service.heroHeadline,
+        heroDescription: service.heroDescription,
+        sections: service.sections,
+        icon: service.icon,
+        accent: service.accent,
+        order: service.order,
+        seoTitle: service.seoTitle,
+        seoDescription: service.seoDescription,
+      }));
+    }
     return rows.map((row) => ({
       ...row,
       sections: (row.sections ?? {}) as ServiceSections,
