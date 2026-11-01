@@ -1,0 +1,80 @@
+const clientLogoFiles = [
+  'katewa.jpg',
+  'dr-sumit-kamble.jpg',
+  'EHCC Network Hospital Jaipur.jpg',
+  'aekum-hub.jpg',
+  'seventh-element.jpg',
+  'milestone.jpg',
+  'INDO-IVF-LOGO.jpg',
+  'arcara.jpg',
+  'Saakar logo.jpg',
+  'dr-nisha-gaur.jpg',
+  'traffic-police.jpg',
+  'allcor-panel.jpg',
+  'prakash-nethralaya-new-logo.jpg.webp',
+  'GRAND ANUKAMPA-logo.jpg',
+  'Clarks Inn Suites Logo-DFG.jpg',
+  'marudhar-dental.jpg',
+  'Nsquare-Event-Management-Registered-Logo-01.jpg',
+  'Airen Vascular Logo.jpg',
+  'propira logo.jpg',
+  'myro-clinic.jpg',
+  'radiance.jpg',
+  'Neopolis logo.jpg',
+  'dr-nikhil.jpg',
+  'JKJ jewellers.jpg',
+  'dr-lokesh.jpg',
+  'ALFEN.jpg',
+  '3handshake.jpg',
+  'ARUWA-NEW.jpg',
+  'luminous.jpg',
+  'key-to-komplete.jpg',
+  'nav-imperial.jpg',
+  'pahariya-stone.jpg',
+  'wowpad.jpg',
+  'quick-spray.jpg',
+  'jkj-HCM.jpg',
+  'Kisna logo.jpg',
+  'edudreamer.jpg',
+  'delhi-6.jpg',
+  'PHCC logo.jpg',
+  'Shree Dev Tea.jpg',
+  'Upper & Bottom Logo.jpg',
+  'Legion-Pharma.jpg',
+  'saatvik-netralaya.jpg',
+  'ashiyana.jpg',
+  'ashapurna.jpg',
+  'dr-rishabh.jpg',
+  'KASHVI-PRO.jpg',
+  'cks.jpg',
+  'knc.jpg',
+  'plotpatta.jpg',
+  'ovale-health.jpg',
+  'window-galaxy.jpg',
+  'vaastunidhi.jpg',
+  'varnika.jpg',
+  'CAREER-POINT_LOGO.jpg',
+  'pandit-ji.jpg',
+  'Sortyfy.jpg',
+  'ATSUI.jpg',
+  'everhomes.jpg',
+  'Tatiwala Logo.jpg',
+  'goldnest.jpg',
+  'heaven-homes.jpg',
+] as const;
+
+export type ClientLogo = {
+  name: string;
+  image: string;
+  url?: string;
+  enabled: boolean;
+};
+
+export const DEFAULT_CLIENT_LOGOS: ClientLogo[] = clientLogoFiles.map((file) => ({
+  name: file
+    .replace(/\.(?:jpe?g|png|webp)$/i, '')
+    .replace(/[-_]+/g, ' ')
+    .replace(/(^|\s)[a-z]/g, (letter) => letter.toUpperCase()),
+  image: `/media/client-logos/${encodeURIComponent(file)}`,
+  enabled: true,
+}));

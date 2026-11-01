@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Check, Star } from 'lucide-react';
 import { HeroTextRotator } from '@/src/components/site/hero-text-rotator';
@@ -30,6 +31,9 @@ import { buildMetadata, faqSchema } from '@/src/lib/seo';
 import { PAGE_KEYWORDS } from '@/src/lib/keywords';
 import { CAPABILITIES } from '@/src/lib/constants';
 import { SocialMediaHomeShowcase } from '@/src/components/site/social-media-experience';
+import { InstagramReelsSection } from '@/src/components/site/instagram-reels-section';
+import { IndustryCarousel } from '@/src/components/site/industry-carousel';
+import type { ClientLogo } from '@/src/content/client-logos';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Apronix Tech — Social Media, Shopify & WordPress Development',
@@ -40,6 +44,87 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export const revalidate = 300;
+
+function ClientLogoRow({ logos, duplicate = false }: { logos: ClientLogo[]; duplicate?: boolean }) {
+  return (
+    <ul
+      aria-hidden={duplicate || undefined}
+      className={`flex shrink-0 items-center gap-3 pr-3 ${duplicate ? 'hidden sm:flex' : ''}`}
+    >
+      {logos.map((logo) => {
+        const content = (
+          <Image
+            src={logo.image}
+            alt={duplicate ? '' : `${logo.name} logo`}
+            width={180}
+            height={80}
+            sizes="180px"
+            className="h-9 w-auto max-w-[145px] object-contain"
+          />
+        );
+        return (
+          <li
+            key={`${duplicate ? 'copy-' : ''}${logo.image}`}
+            className="flex h-[72px] w-[190px] flex-none items-center justify-center rounded-xl border border-white/[0.09] bg-white px-5 transition duration-300 hover:-translate-y-0.5 hover:border-brand/40 sm:h-[80px]"
+          >
+            {logo.url ? (
+              <a
+                href={logo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={duplicate ? undefined : `${logo.name} website`}
+                tabIndex={duplicate ? -1 : undefined}
+              >
+                {content}
+              </a>
+            ) : (
+              content
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function ClientLogoShowcase({ logos }: { logos: ClientLogo[] }) {
+  const midpoint = Math.ceil(logos.length / 2);
+  const rows = [logos.slice(0, midpoint), logos.slice(midpoint)].filter((row) => row.length > 0);
+
+  return (
+    <section
+      aria-labelledby="client-work-heading"
+      className="overflow-hidden border-y border-white/[0.07] bg-ink-soft/60 py-8 sm:py-10"
+    >
+      <div className="shell">
+        <div className="mb-5 sm:mb-6">
+          <div>
+            <h2 id="client-work-heading" className="text-[20px] font-semibold text-white sm:text-[23px]">
+              Brands that choose Apronix Tech
+            </h2>
+            <p className="mt-1 max-w-2xl text-[12.5px] leading-relaxed text-white/60 sm:text-[13px]">
+              We collaborate with ambitious businesses to create stronger digital experiences and build lasting growth.
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {rows.map((row, index) => (
+            <div
+              key={index}
+              className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:overflow-hidden"
+            >
+              <div className="flex w-max sm:animate-marquee sm:hover:[animation-play-state:paused] motion-reduce:animate-none">
+                <ClientLogoRow logos={row} />
+                <ClientLogoRow logos={row} duplicate />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default async function HomePage() {
   const [services, featuredProjects, projects, posts, faqs, testimonials, settings, pricingPlans] = await Promise.all([
@@ -53,20 +138,13 @@ export default async function HomePage() {
     getPricingPlans(),
   ]);
 
-  const publishedClients = Array.from(
-    new Map(
-      projects.flatMap((project) => {
-        const name = project.clientName?.trim();
-        if (project.isSampleContent || !name) return [];
-        return [
-          [
-            name.toLocaleLowerCase(),
-            { name, detail: project.industry || project.categoryLabel },
-          ] as const,
-        ];
-      }),
-    ).values(),
-  );
+  const clientLogos = settings.clientLogos.filter((logo) => logo.enabled);
+  const caseStudies = [
+    ...featuredProjects,
+    ...projects.filter((project) => !featuredProjects.some((featured) => featured.id === project.id)),
+  ].slice(0, 3);
+  const industryItems =
+    services.find((service) => service.key === 'SOCIAL_MEDIA_MANAGEMENT')?.sections.industries ?? [];
   const faqLd = faqSchema(faqs.map((f) => ({ question: f.question, answer: f.answer })));
   const showTestimonials = settings.showTestimonials && testimonials.length > 0;
 
@@ -143,64 +221,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {publishedClients.length > 0 && (
-        <section
-          aria-labelledby="client-work-heading"
-          className="overflow-hidden border-y border-white/[0.07] bg-ink-soft/60 py-7 sm:py-8"
-        >
-          <div className="shell">
-            <div className="mb-5 flex items-center justify-between gap-4 sm:mb-6">
-              <div>
-                <h2
-                  id="client-work-heading"
-                  className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/55 sm:text-[11px]"
-                >
-                  Selected client work
-                </h2>
-                <p className="mt-1 text-[12px] text-white/75 sm:text-[13px]">
-                  Real projects, published with permission.
-                </p>
-              </div>
-              <Link
-                href="/work"
-                className="inline-flex min-h-[44px] flex-none items-center gap-1.5 text-[12px] font-semibold text-white/75 transition hover:text-brand-soft sm:text-[13px]"
-              >
-                View work
-                <ArrowRight size={13} aria-hidden="true" />
-              </Link>
-            </div>
-
-            <div className="mask-fade-r overflow-hidden">
-              <div className="flex w-max animate-marquee motion-reduce:animate-none">
-                {[false, true].map((isDuplicate) => (
-                  <ul
-                    key={String(isDuplicate)}
-                    aria-hidden={isDuplicate || undefined}
-                    className="flex shrink-0 items-center gap-3 pr-3"
-                  >
-                    {publishedClients.map((client) => (
-                      <li
-                        key={`${isDuplicate ? 'copy-' : ''}${client.name}`}
-                        className="flex min-h-[58px] items-center gap-3 rounded-xl border border-white/[0.09] bg-white/[0.025] px-4 sm:min-h-[64px] sm:px-5"
-                      >
-                        <span className="h-2 w-2 flex-none rounded-full bg-brand" aria-hidden="true" />
-                        <span className="whitespace-nowrap">
-                          <span className="block text-[13px] font-semibold text-white sm:text-[14px]">
-                            {client.name}
-                          </span>
-                          <span className="mt-0.5 block text-[10px] text-white/55 sm:text-[11px]">
-                            {client.detail}
-                          </span>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+      {settings.showClients && clientLogos.length > 0 && <ClientLogoShowcase logos={clientLogos} />}
 
       {/* -------------------------------------------------------------- trust */}
       <section aria-labelledby="capabilities-heading" className="border-y border-white/[0.07] bg-ink-soft/60">
@@ -264,6 +285,44 @@ export default async function HomePage() {
         plans={pricingPlans}
       />
 
+      <InstagramReelsSection
+        reels={settings.instagramReels}
+        instagramProfile={
+          settings.socials.find((social) => social.label.trim().toLowerCase() === 'instagram')?.url
+        }
+      />
+
+      {industryItems.length > 0 && (
+        <section
+          className="section border-y border-white/[0.07] bg-ink-soft/40"
+          aria-labelledby="industries-heading"
+        >
+          <div className="shell grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-12">
+            <div>
+              <p className="eyebrow">
+                <span className="dot" aria-hidden="true" />
+                Industries we serve
+              </p>
+              <h2 id="industries-heading" className="mt-4 text-display-md text-white">
+                Digital Solutions Across Multiple Industries
+              </h2>
+              <p className="mt-4 max-w-md text-[15px] leading-relaxed text-mute-onDark">
+                Every industry has a different audience, different challenges, and different growth
+                opportunities. We shape creative, marketing, and website strategies around each business.
+              </p>
+              <Link
+                href="/contact"
+                className="mt-6 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-brand px-6 text-[13px] font-semibold text-white shadow-[0_12px_34px_-18px_rgba(255,48,56,0.9)] transition hover:bg-brand-dark"
+              >
+                Let&apos;s grow your business
+                <ArrowUpRight size={15} aria-hidden="true" />
+              </Link>
+            </div>
+            <IndustryCarousel items={industryItems} />
+          </div>
+        </section>
+      )}
+
       {/* -------------------------------------------------------- technologies */}
       <section
         className="border-y border-white/[0.07] bg-ink-soft/40 py-14 sm:py-16 lg:py-20"
@@ -290,68 +349,109 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* --------------------------------------------------------------- why */}
-      <section className="section border-t border-white/[0.07] bg-ink-soft/40" aria-labelledby="why-heading">
+      {/* -------------------------------------------------------- capabilities */}
+      <section className="section border-t border-white/[0.07] bg-ink-soft/40" aria-labelledby="capabilities-title">
         <div className="shell">
-          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-            <div className="lg:sticky lg:top-28">
-              <p className="eyebrow">
-                <span className="dot" aria-hidden="true" />
-                Why Apronix
-              </p>
-              <h2 id="why-heading" className="mt-4 text-display-md text-white">
-                Strategy first.
-                <br />
-                <span className="text-white/65">Then the pixels.</span>
-              </h2>
-              <p className="mt-4 max-w-md text-[15px] leading-relaxed text-mute-onDark">
-                We are a small team by design — the people who plan your project are the people who
-                deliver it. That keeps decisions fast and quality consistent.
-              </p>
-              <p className="mt-6 flex items-baseline gap-2 text-[13px] text-white/65">
-                <span className="text-[26px] font-semibold text-white">{services.length}</span>
-                core service lines, each led by a named owner
-              </p>
-            </div>
+          <SectionHeading
+            eyebrow="Agency capabilities"
+            title={<span id="capabilities-title">Your One-Stop Digital Growth Partner</span>}
+            description="From building your online presence to creating engaging content and high-performing websites, Apronix Tech brings strategy, creativity, and technology together."
+          />
+          <div className="mt-8">
             <WhyApronix />
           </div>
         </div>
       </section>
 
-      {/* ----------------------------------------------------------- projects */}
-      {featuredProjects.length > 0 && (
-        <section className="section" aria-labelledby="work-heading">
+      {/* --------------------------------------------------------- case studies */}
+      <section className="section" aria-labelledby="work-heading">
           <div className="shell">
             <SectionHeading
-              eyebrow="Selected work"
-              title={<span id="work-heading">Recent projects</span>}
-              description="A look at how we structure engagements. Every project page documents the brief, the constraints and what we actually shipped."
+              eyebrow="Case studies"
+              title={<span id="work-heading">Real Projects. Real Digital Experiences.</span>}
+              description="Explore selected digital projects, creative solutions, and website experiences developed to help businesses strengthen their online presence."
               action={
-                <Link
-                  href="/work"
-                  className="inline-flex h-11 items-center gap-2 rounded-full border border-white/15 px-5 text-[13.5px] font-semibold text-white transition hover:bg-white/[0.07]"
-                >
-                  View all work
-                  <ArrowRight size={14} aria-hidden="true" />
-                </Link>
+                caseStudies.length > 0 ? (
+                  <Link
+                    href="/work"
+                    className="inline-flex min-h-[44px] items-center gap-2 text-[13.5px] font-semibold text-white transition hover:text-brand-soft"
+                  >
+                    View all case studies
+                    <ArrowRight size={14} aria-hidden="true" />
+                  </Link>
+                ) : undefined
               }
             />
-            {featuredProjects.some((p) => p.isSampleContent) && (
-              <p className="mt-4 rounded-xl border border-amber-400/25 bg-amber-400/[0.07] px-4 py-2.5 text-[12.5px] text-amber-100">
-                Some entries below are sample placeholders included with this build. Replace them with
-                real, authorised projects from the admin dashboard before launch.
-              </p>
+            {caseStudies.length > 0 ? (
+              <div
+                className={`mt-8 grid gap-4 ${
+                  caseStudies.length > 1 ? 'lg:grid-cols-[1.2fr_0.8fr]' : 'lg:grid-cols-1'
+                }`}
+              >
+                <Link
+                  href={`/work/${caseStudies[0].slug}`}
+                  aria-label={`View case study: ${caseStudies[0].title}`}
+                  className="group relative flex min-h-[390px] flex-col justify-end overflow-hidden rounded-3xl border border-white/[0.08] bg-ink-soft p-6 transition hover:border-brand/40 sm:min-h-[480px] sm:p-8"
+                >
+                  {caseStudies[0].featuredImage ? (
+                    <Image
+                      src={caseStudies[0].featuredImage}
+                      alt={caseStudies[0].featuredImageAlt || `${caseStudies[0].title} project`}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 65vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(255,48,56,0.24),transparent_35%),linear-gradient(145deg,#191b22,#111318_55%,#3b0c10)]" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
+                  <div className="relative">
+                    <span className="inline-flex rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white/85 backdrop-blur">
+                      {caseStudies[0].industry || caseStudies[0].categoryLabel}
+                    </span>
+                    <h3 className="mt-4 max-w-2xl text-[26px] font-semibold leading-tight text-white sm:text-[34px]">
+                      {caseStudies[0].title}
+                    </h3>
+                    <p className="mt-3 max-w-xl text-[13.5px] leading-relaxed text-white/75 sm:text-[14px]">
+                      {caseStudies[0].shortDescription}
+                    </p>
+                    <span className="mt-5 inline-flex items-center gap-2 text-[13px] font-semibold text-white">
+                      View case study
+                      <ArrowUpRight
+                        size={15}
+                        className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </div>
+                </Link>
+
+                {caseStudies.length > 1 && (
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+                    {caseStudies.slice(1).map((project, index) => (
+                      <Reveal key={project.id} delay={index * 80} as="div">
+                        <ProjectCard project={project} index={index + 1} />
+                      </Reveal>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="mt-8 rounded-3xl border border-white/[0.08] bg-ink-soft p-6 sm:p-8">
+                <p className="max-w-2xl text-[14px] leading-relaxed text-mute-onDark">
+                  Approved case studies will appear here when real project details and visuals are ready to publish.
+                </p>
+                <Link
+                  href="/contact"
+                  className="mt-5 inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-semibold text-white hover:text-brand-soft"
+                >
+                  Discuss a project
+                  <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+              </div>
             )}
-            <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {featuredProjects.map((project, index) => (
-                <Reveal key={project.id} delay={index * 80} as="div">
-                  <ProjectCard project={project} index={index} />
-                </Reveal>
-              ))}
-            </div>
           </div>
-        </section>
-      )}
+      </section>
 
       <TeamSection />
 
@@ -375,23 +475,39 @@ export default async function HomePage() {
           <div className="shell">
             <SectionHeading
               eyebrow="Client feedback"
-              title={<span id="testimonials-heading">What clients say</span>}
-              description="Published with permission. Every quote below has been approved by the client."
+              title={<span id="testimonials-heading">Voices That Speak for Our Work</span>}
+              description="Strong partnerships begin with trust. Discover feedback from businesses and people who have experienced our work."
             />
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="mt-8 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
               {testimonials.slice(0, 3).map((t, i) => (
-                <Reveal key={t.id} delay={i * 80} className="card-dark flex h-full flex-col p-6">
+                <Reveal
+                  key={t.id}
+                  delay={i * 80}
+                  className={`card-dark relative flex h-full flex-col overflow-hidden p-6 ${
+                    i === 0 ? 'border-brand/20 bg-[radial-gradient(circle_at_top_right,rgba(255,48,56,0.12),transparent_40%),#111318] sm:p-8 lg:row-span-2' : ''
+                  }`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -right-2 -top-8 select-none text-[150px] font-semibold leading-none text-brand/[0.08]"
+                  >
+                    “
+                  </span>
                   {t.rating ? (
-                    <div className="flex gap-0.5" aria-label={`${t.rating} out of 5`}>
+                    <div className="relative flex gap-0.5" aria-label={`${t.rating} out of 5`}>
                       {Array.from({ length: t.rating }).map((_, idx) => (
                         <Star key={idx} size={13} className="fill-brand text-brand-soft" aria-hidden="true" />
                       ))}
                     </div>
                   ) : null}
-                  <blockquote className="mt-4 flex-1 text-[14.5px] leading-relaxed text-white/85">
+                  <blockquote
+                    className={`relative mt-4 flex-1 leading-relaxed text-white/85 ${
+                      i === 0 ? 'text-[17px] sm:text-[19px]' : 'text-[14.5px]'
+                    }`}
+                  >
                     “{t.quote}”
                   </blockquote>
-                  <footer className="mt-5 border-t border-white/[0.07] pt-4 text-[12.5px]">
+                  <footer className="relative mt-5 border-t border-white/[0.07] pt-4 text-[12.5px]">
                     <span className="font-semibold text-white">{t.authorName}</span>
                     {(t.authorRole || t.company) && (
                       <span className="text-white/65">

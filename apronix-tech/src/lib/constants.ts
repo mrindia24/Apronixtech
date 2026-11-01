@@ -71,34 +71,40 @@ export const PROCESS_STEPS = [
 
 export const WHY_APRONIX = [
   {
-    title: 'Strategy before execution',
-    body: 'Every deliverable starts from a documented goal. We ask why before we ask what colour.',
+    title: '360° Digital Solutions',
+    body: 'Bring marketing and website requirements together with creative execution and strategic planning designed around your business.',
     icon: 'compass',
+    href: '/services',
   },
   {
-    title: 'Creative and technical expertise',
-    body: 'Design, content and development live in the same team, so ideas survive contact with the build.',
+    title: 'Social Media Strategy',
+    body: 'Build a consistent brand presence through content planning, creative campaigns, platform-specific strategies, and audience-focused communication.',
     icon: 'layers',
+    href: '/services/social-media-management',
   },
   {
-    title: 'Transparent communication',
-    body: 'One point of contact, written updates and clear timelines. You always know what is happening next.',
+    title: 'Shopify & WordPress Development',
+    body: 'Create responsive websites that showcase your brand, improve user experience, and support your business goals.',
+    icon: 'shopping-bag',
+    href: '/services',
+  },
+  {
+    title: 'Industry-Focused Approach',
+    body: 'Shape creative and digital work around your audience, industry, competition, and objectives.',
+    icon: 'building',
+    href: '/services',
+  },
+  {
+    title: 'Smooth Onboarding & Collaboration',
+    body: 'Follow a clear workflow from the first discussion to delivery, with structured communication, feedback, and approvals.',
     icon: 'message-square',
+    href: '/contact',
   },
   {
-    title: 'Responsive by default',
-    body: 'Every layout is designed and tested on mobile first, where most of your traffic actually arrives.',
-    icon: 'smartphone',
-  },
-  {
-    title: 'Scalable solutions',
-    body: 'We build structures that tolerate growth — more products, more pages, more markets.',
-    icon: 'trending-up',
-  },
-  {
-    title: 'Clear deliverables',
-    body: 'You receive documentation, assets and access. Nothing is held hostage when a project ends.',
-    icon: 'clipboard-check',
+    title: 'Research & Creative Thinking',
+    body: 'Make informed decisions through audience research, competitor analysis, creative exploration, and practical digital recommendations.',
+    icon: 'compass',
+    href: '/contact',
   },
 ] as const;
 

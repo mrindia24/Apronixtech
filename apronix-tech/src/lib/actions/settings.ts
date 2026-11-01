@@ -9,6 +9,51 @@ import { deleteStoredFile } from '@/src/lib/storage';
 import type { ActionState } from '@/src/lib/actions/types';
 import { z } from 'zod';
 
+const clientLogoSchema = z.object({
+  name: z.string().trim().min(1).max(100),
+  image: z
+    .string()
+    .trim()
+    .regex(
+      /^\/(?:media\/client-logos|uploads)\/(?:[A-Za-z0-9._-]|%20|%26)+$/,
+      'Use a local client logo image path.',
+    ),
+  url: z
+    .string()
+    .trim()
+    .max(300)
+    .optional()
+    .refine((value) => !value || isHttpsUrl(value), 'Logo links must use HTTPS.'),
+  enabled: z.boolean(),
+}).transform(({ url, ...logo }) => (url ? { ...logo, url } : logo));
+
+const clientLogosInputSchema = z
+  .string()
+  .max(30_000, 'Keep the homepage client logo list under 30,000 characters.')
+  .transform((value, context) => {
+    let json: unknown;
+    try {
+      json = JSON.parse(value);
+    } catch {
+      context.addIssue({ code: z.ZodIssueCode.custom, message: 'Enter valid JSON for the client logos.' });
+      return z.NEVER;
+    }
+
+    const parsed = z.array(clientLogoSchema).max(100).safeParse(json);
+    if (!parsed.success) {
+      for (const issue of parsed.error.issues) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: issue.path,
+          message: issue.message,
+        });
+      }
+      return z.NEVER;
+    }
+
+    return parsed.data;
+  });
+
 const settingsSchema = z.object({
   siteName: z.string().trim().min(2).max(80),
   tagline: z.string().trim().max(160),
@@ -23,6 +68,26 @@ const settingsSchema = z.object({
   showTestimonials: z.boolean(),
   showClients: z.boolean(),
   analyticsConsent: z.boolean(),
+  instagramReels: z.array(
+    z
+      .string()
+      .trim()
+      .max(300, 'Instagram Reel URLs must be under 300 characters.')
+      .refine((value) => {
+        if (!value) return true;
+        try {
+          const url = new URL(value);
+          return (
+            url.protocol === 'https:' &&
+            url.hostname.replace(/^www\./, '') === 'instagram.com' &&
+            /^\/(?:reel|p)\/[\w-]+\/?$/.test(url.pathname)
+          );
+        } catch {
+          return false;
+        }
+      }, 'Enter a public Instagram Reel or post URL.'),
+  ).max(3),
+  clientLogos: clientLogosInputSchema,
 });
 
 export async function saveSettingsAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -46,12 +111,17 @@ export async function saveSettingsAction(_prev: ActionState, formData: FormData)
     showTestimonials: formData.get('showTestimonials') === 'on',
     showClients: formData.get('showClients') === 'on',
     analyticsConsent: formData.get('analyticsConsent') === 'on',
+    instagramReels: formData
+      .getAll('instagramReel')
+      .map((value) => String(value).trim())
+      .filter(Boolean),
+    clientLogos: String(formData.get('clientLogos') ?? '[]'),
   });
 
   if (!parsed.success) {
     const errors: Record<string, string> = {};
     for (const issue of parsed.error.issues) {
-      const key = issue.path.join('.') || 'form';
+      const key = issue.path[0] === 'clientLogos' ? 'clientLogos' : issue.path.join('.') || 'form';
       if (!errors[key]) errors[key] = issue.message;
     }
     return { ok: false, message: 'Please check the highlighted fields.', errors };
@@ -91,6 +161,14 @@ export async function saveSettingsAction(_prev: ActionState, formData: FormData)
   revalidatePath('/admin/settings');
 
   return { ok: true, message: 'Site settings saved.' };
+}
+
+function isHttpsUrl(value: string) {
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
 }
 
 export async function createRedirectAction(formData: FormData) {

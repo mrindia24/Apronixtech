@@ -14,7 +14,7 @@ export type ServiceSections = {
   useCases: string[];
   faqs: { question: string; answer: string }[];
   socialServices?: { title: string; body: string; icon: string }[];
-  industries?: { name: string; examples: string[]; icon: string }[];
+  industries?: { name: string; examples: string[]; icon: string; image?: string }[];
   industryMarquee?: string[];
   relatedKeys?: ServiceKey[];
   tech?: string[];

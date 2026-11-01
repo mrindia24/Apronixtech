@@ -159,7 +159,8 @@ export function ServiceContentForm({ service }: { service: ServiceInput }) {
                     <code className="rounded bg-white/10 px-1">useCases</code> and{' '}
                     <code className="rounded bg-white/10 px-1">faqs</code>. For Social Media,{' '}
                     <code className="rounded bg-white/10 px-1">socialServices</code>,{' '}
-                    <code className="rounded bg-white/10 px-1">industries</code> and{' '}
+                    <code className="rounded bg-white/10 px-1">industries</code> (including optional local{' '}
+                    <code className="rounded bg-white/10 px-1">image</code> paths from Media) and{' '}
                     <code className="rounded bg-white/10 px-1">industryMarquee</code> are editable here too.
                     Optional <code className="rounded bg-white/10 px-1">tech</code> and{' '}
                     <code className="rounded bg-white/10 px-1">startingNote</code> are also supported.

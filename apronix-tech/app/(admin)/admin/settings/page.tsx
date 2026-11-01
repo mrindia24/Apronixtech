@@ -50,6 +50,8 @@ export default async function AdminSettingsPage() {
               showClients: settings.showClients,
               analyticsConsent: settings.analyticsConsent,
               socials: settings.socials,
+              instagramReels: settings.instagramReels,
+              clientLogos: settings.clientLogos,
               facts: settings.facts,
             }}
             canEdit={hasRole(user, 'ADMIN')}
