@@ -3,6 +3,7 @@
 import { FormShell } from '@/src/components/admin/form-shell';
 import { Field, SubmitButton, inputClass, textareaClass, Card } from '@/src/components/admin/ui';
 import { saveSettingsAction } from '@/src/lib/actions/settings';
+import type { ClientLogo } from '@/src/content/client-logos';
 
 type Settings = {
   siteName: string;
@@ -19,6 +20,8 @@ type Settings = {
   showClients: boolean;
   analyticsConsent: boolean;
   socials: { label: string; url: string }[];
+  instagramReels: string[];
+  clientLogos: ClientLogo[];
   facts: { label: string; value: string }[];
 };
 
@@ -132,8 +135,51 @@ export function SettingsForm({ settings, canEdit }: { settings: Settings; canEdi
             </div>
           </Card>
 
+          <Card
+            title="Homepage Instagram Reels"
+            description="Add up to three public Instagram Reel or post URLs. Only real Apronix Tech content will be embedded."
+          >
+            <div className="space-y-3">
+              {[0, 1, 2].map((index) => (
+                <Field
+                  key={index}
+                  label={`Reel ${index + 1}`}
+                  name={`instagramReel-${index}`}
+                  error={state.errors?.instagramReels}
+                  hint={index === 0 ? 'Paste a link such as https://www.instagram.com/reel/…' : undefined}
+                >
+                  <input
+                    id={`instagramReel-${index}`}
+                    name="instagramReel"
+                    type="url"
+                    defaultValue={settings.instagramReels[index] ?? ''}
+                    placeholder="https://www.instagram.com/reel/…"
+                    className={inputClass}
+                    aria-describedby={state.errors?.instagramReels ? `instagramReel-${index}-error` : undefined}
+                  />
+                </Field>
+              ))}
+            </div>
+          </Card>
+
           <Card title="Homepage sections">
-            <div className="space-y-2.5">
+            <Field
+              label="Homepage client logos"
+              name="clientLogos"
+              error={state.errors?.clientLogos}
+              hint='Edit the JSON list to rename, reorder, disable, or link a logo. Images must use /media/client-logos/… or /uploads/… paths. Only enable the section below when display permission is confirmed.'
+            >
+              <textarea
+                id="clientLogos"
+                name="clientLogos"
+                rows={12}
+                defaultValue={JSON.stringify(settings.clientLogos, null, 2)}
+                className={textareaClass}
+                spellCheck={false}
+                aria-describedby={state.errors?.clientLogos ? 'clientLogos-error' : undefined}
+              />
+            </Field>
+            <div className="mt-4 space-y-2.5">
               <label className="flex items-start gap-2 text-[12.5px] leading-relaxed text-white/75">
                 <input
                   type="checkbox"

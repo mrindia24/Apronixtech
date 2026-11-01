@@ -119,7 +119,7 @@ const projectListSelect = {
 export const getProjects = unstable_cache(
   async (): Promise<ProjectListItem[]> => {
     return prisma.portfolioProject.findMany({
-      where: { status: PUBLIC_STATUS.PUBLISHED },
+      where: { status: PUBLIC_STATUS.PUBLISHED, isSampleContent: false },
       select: projectListSelect,
       orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
     });
@@ -131,7 +131,7 @@ export const getProjects = unstable_cache(
 export const getFeaturedProjects = unstable_cache(
   async (limit = 3): Promise<ProjectListItem[]> => {
     return prisma.portfolioProject.findMany({
-      where: { status: PUBLIC_STATUS.PUBLISHED, featured: true },
+      where: { status: PUBLIC_STATUS.PUBLISHED, isSampleContent: false, featured: true },
       select: projectListSelect,
       orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
       take: limit,
@@ -143,7 +143,7 @@ export const getFeaturedProjects = unstable_cache(
 
 export async function getProjectBySlug(slug: string) {
   return prisma.portfolioProject.findFirst({
-    where: { slug, status: PUBLIC_STATUS.PUBLISHED },
+    where: { slug, status: PUBLIC_STATUS.PUBLISHED, isSampleContent: false },
     include: { images: { orderBy: { order: 'asc' } } },
   });
 }
@@ -152,6 +152,7 @@ export async function getRelatedProjects(slug: string, category: ServiceKey | nu
   return prisma.portfolioProject.findMany({
     where: {
       status: PUBLIC_STATUS.PUBLISHED,
+      isSampleContent: false,
       slug: { not: slug },
       ...(category ? { serviceCategory: category } : {}),
     },

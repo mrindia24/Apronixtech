@@ -163,16 +163,41 @@ export function ServiceCards({ services }: { services: ServiceRecord[] }) {
 
 export function WhyApronix() {
   return (
-    <div className="grid gap-px overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.06] sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {WHY_APRONIX.map((item, index) => (
         <Reveal
           key={item.title}
           delay={(index % 3) * 70}
-          className="group bg-ink p-6 transition-colors duration-300 hover:bg-ink-soft sm:p-7"
+          as="article"
+          className="h-full"
         >
-          <ServiceIcon name={item.icon} className="h-5 w-5 text-brand-soft" />
-          <h3 className="mt-5 text-[15.5px] font-semibold text-white">{item.title}</h3>
-          <p className="mt-2 text-[13.5px] leading-relaxed text-mute-onDark">{item.body}</p>
+          <Link
+            href={item.href}
+            className={cn(
+              'group relative flex h-full min-h-[220px] flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-ink-soft p-6 transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:bg-[#14171D] sm:p-7',
+              (index === 0 || index === 5) &&
+                'border-brand/20 bg-[radial-gradient(circle_at_top_right,rgba(255,48,56,0.18),transparent_55%),#111318] lg:col-span-2',
+            )}
+          >
+            <div className="flex items-center justify-between">
+              <span className="grid h-11 w-11 place-items-center rounded-2xl border border-white/10 bg-white/[0.04] text-brand-soft">
+                <ServiceIcon name={item.icon} className="h-5 w-5" />
+              </span>
+              <span className="text-[11px] font-bold tracking-[0.18em] text-white/40">
+                0{index + 1}
+              </span>
+            </div>
+            <h3 className="mt-6 text-[16px] font-semibold leading-snug text-white">{item.title}</h3>
+            <p className="mt-2 flex-1 text-[13.5px] leading-relaxed text-mute-onDark">{item.body}</p>
+            <span className="mt-5 inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-white">
+              Read more
+              <ArrowRight
+                size={13}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+                aria-hidden="true"
+              />
+            </span>
+          </Link>
         </Reveal>
       ))}
     </div>

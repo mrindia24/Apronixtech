@@ -2,6 +2,7 @@ import 'server-only';
 import { unstable_cache } from 'next/cache';
 import { prisma } from '@/src/lib/prisma';
 import { publicEnv, serverEnv, features, whatsappLink } from '@/src/lib/env';
+import { DEFAULT_CLIENT_LOGOS, type ClientLogo } from '@/src/content/client-logos';
 
 /**
  * Editable site settings. Values live in the SiteSetting table so the agency can
@@ -19,11 +20,13 @@ export type SiteSettings = {
   serviceArea: string;
   whatsapp: string | null;
   socials: { label: string; url: string }[];
+  instagramReels: string[];
   footerNote: string;
   businessHours: string;
   showTestimonials: boolean;
   showClients: boolean;
   clientNames: string[];
+  clientLogos: ClientLogo[];
   facts: { label: string; value: string }[];
   analyticsConsent: boolean;
 };
@@ -39,11 +42,13 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   serviceArea: 'Working with clients remotely across India and worldwide.',
   whatsapp: whatsappLink('Hi Apronix Tech, I would like to discuss a project.'),
   socials: [],
+  instagramReels: [],
   footerNote: 'Built with care by Apronix Tech.',
   businessHours: 'Mon–Fri, 10:00–19:00 IST',
   showTestimonials: true,
   showClients: false,
   clientNames: [],
+  clientLogos: DEFAULT_CLIENT_LOGOS,
   facts: [
     { label: 'Disciplines', value: 'Social · Shopify · WordPress' },
     { label: 'Engagement', value: 'Project-based & retained' },
@@ -57,7 +62,16 @@ async function loadSettings(): Promise<SiteSettings> {
   try {
     const rows = await prisma.siteSetting.findMany();
     const stored = Object.fromEntries(rows.map((row) => [row.key, row.value as unknown]));
-    return { ...DEFAULT_SETTINGS, ...(stored as Partial<SiteSettings>) };
+    const savedSettings = { ...DEFAULT_SETTINGS, ...(stored as Partial<SiteSettings>) };
+    return {
+      ...savedSettings,
+      instagramReels: Array.isArray(savedSettings.instagramReels)
+        ? savedSettings.instagramReels.filter(isInstagramReelUrl).slice(0, 3)
+        : [],
+      clientLogos: Array.isArray(savedSettings.clientLogos)
+        ? savedSettings.clientLogos.filter(isClientLogo).slice(0, 100)
+        : DEFAULT_CLIENT_LOGOS,
+    };
   } catch {
     return DEFAULT_SETTINGS;
   }
@@ -79,11 +93,13 @@ const SETTING_KEYS: (keyof SiteSettings)[] = [
   'serviceArea',
   'whatsapp',
   'socials',
+  'instagramReels',
   'footerNote',
   'businessHours',
   'showTestimonials',
   'showClients',
   'clientNames',
+  'clientLogos',
   'facts',
   'analyticsConsent',
 ];
@@ -101,6 +117,42 @@ export async function saveSiteSettings(input: Partial<SiteSettings>) {
       }),
     ),
   );
+}
+
+function isInstagramReelUrl(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  try {
+    const url = new URL(value);
+    return (
+      url.protocol === 'https:' &&
+      url.hostname.replace(/^www\./, '') === 'instagram.com' &&
+      /^\/(?:reel|p)\/[\w-]+\/?$/.test(url.pathname)
+    );
+  } catch {
+    return false;
+  }
+}
+
+function isClientLogo(value: unknown): value is ClientLogo {
+  if (!value || typeof value !== 'object') return false;
+  const logo = value as Partial<ClientLogo>;
+  return (
+    typeof logo.name === 'string' &&
+    logo.name.trim().length > 0 &&
+    typeof logo.image === 'string' &&
+    /^\/(?:media\/client-logos|uploads)\/(?:[A-Za-z0-9._-]|%20|%26)+$/.test(logo.image) &&
+    typeof logo.enabled === 'boolean' &&
+    (logo.url === undefined || isHttpsUrl(logo.url))
+  );
+}
+
+function isHttpsUrl(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
 }
 
 export { features };
