@@ -52,6 +52,10 @@ const config: Config = {
           from: { transform: 'translateX(0)' },
           to: { transform: 'translateX(-50%)' },
         },
+        'marquee-reverse': {
+          from: { transform: 'translateX(-50%)' },
+          to: { transform: 'translateX(0)' },
+        },
         'pulse-ring': {
           '0%': { transform: 'scale(0.9)', opacity: '0.7' },
           '70%': { transform: 'scale(1.6)', opacity: '0' },
@@ -61,6 +65,7 @@ const config: Config = {
       animation: {
         'fade-up': 'fade-up 0.7s cubic-bezier(0.16,1,0.3,1) both',
         marquee: 'marquee 38s linear infinite',
+        'marquee-reverse': 'marquee-reverse 38s linear infinite',
         'pulse-ring': 'pulse-ring 2.4s ease-out infinite',
       },
     },

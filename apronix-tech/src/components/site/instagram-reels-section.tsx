@@ -1,15 +1,12 @@
 import Link from 'next/link';
 import { ArrowUpRight, Instagram, Play, Sparkles } from 'lucide-react';
 import { SectionHeading } from '@/src/components/site/sections';
+import { instagramEmbedUrl } from '@/src/lib/instagram';
 
 type InstagramReelsSectionProps = {
   reels: string[];
   instagramProfile?: string;
 };
-
-function reelEmbedUrl(reel: string) {
-  return `${reel.replace(/\/+$/, '')}/embed`;
-}
 
 export function InstagramReelsSection({ reels, instagramProfile }: InstagramReelsSectionProps) {
   return (
@@ -43,18 +40,26 @@ export function InstagramReelsSection({ reels, instagramProfile }: InstagramReel
         />
 
         {reels.length > 0 ? (
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            className={
+              reels.length === 1
+                ? 'mx-auto mt-8 grid max-w-sm gap-4'
+                : reels.length === 2
+                  ? 'mx-auto mt-8 grid max-w-5xl gap-4 sm:grid-cols-2'
+                  : 'mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3'
+            }
+          >
             {reels.map((reel, index) => (
               <article
                 key={reel}
                 className="group overflow-hidden rounded-3xl border border-white/[0.09] bg-ink shadow-card transition duration-300 hover:-translate-y-1 hover:border-brand/35 hover:shadow-[0_24px_70px_-38px_rgba(255,48,56,0.42)]"
               >
-                <div className="relative aspect-[9/12] overflow-hidden bg-[#121318]">
+                <div className="relative h-[500px] overflow-hidden bg-[#121318] sm:h-[540px]">
                   <iframe
-                    src={reelEmbedUrl(reel)}
+                    src={instagramEmbedUrl(reel)}
                     title={`Apronix Tech Instagram Reel ${index + 1}`}
                     loading="lazy"
-                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
                     allowFullScreen
                     referrerPolicy="strict-origin-when-cross-origin"
                     className="absolute inset-0 h-full w-full border-0"

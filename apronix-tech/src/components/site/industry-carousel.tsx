@@ -37,7 +37,7 @@ export function IndustryCarousel({ items }: { items: Industry[] }) {
   }
 
   return (
-    <div>
+    <div className="min-w-0">
       <div className="mb-4 flex items-center justify-between gap-4">
         <p className="text-[12px] text-white/55">Explore the industries we work with</p>
         <div className="flex gap-2">

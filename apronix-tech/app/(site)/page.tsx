@@ -49,7 +49,7 @@ function ClientLogoRow({ logos, duplicate = false }: { logos: ClientLogo[]; dupl
   return (
     <ul
       aria-hidden={duplicate || undefined}
-      className={`flex shrink-0 items-center gap-3 pr-3 ${duplicate ? 'hidden sm:flex' : ''}`}
+      className="flex shrink-0 items-center gap-3 pr-3"
     >
       {logos.map((logo) => {
         const content = (
@@ -59,13 +59,13 @@ function ClientLogoRow({ logos, duplicate = false }: { logos: ClientLogo[]; dupl
             width={180}
             height={80}
             sizes="180px"
-            className="h-9 w-auto max-w-[145px] object-contain"
+            className="h-9 w-auto max-w-[145px] object-contain mix-blend-multiply"
           />
         );
         return (
           <li
             key={`${duplicate ? 'copy-' : ''}${logo.image}`}
-            className="flex h-[72px] w-[190px] flex-none items-center justify-center rounded-xl border border-white/[0.09] bg-white px-5 transition duration-300 hover:-translate-y-0.5 hover:border-brand/40 sm:h-[80px]"
+            className="flex h-[72px] w-[190px] flex-none items-center justify-center rounded-xl border border-white/[0.09] bg-ink-soft px-5 transition duration-300 hover:-translate-y-0.5 hover:border-brand/40 sm:h-[80px]"
           >
             {logo.url ? (
               <a
@@ -112,9 +112,13 @@ function ClientLogoShowcase({ logos }: { logos: ClientLogo[] }) {
           {rows.map((row, index) => (
             <div
               key={index}
-              className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:overflow-hidden"
+              className="overflow-hidden"
             >
-              <div className="flex w-max sm:animate-marquee sm:hover:[animation-play-state:paused] motion-reduce:animate-none">
+              <div
+                className={`flex w-max hover:[animation-play-state:paused] motion-reduce:animate-none ${
+                  index === 0 ? 'animate-marquee-reverse' : 'animate-marquee'
+                }`}
+              >
                 <ClientLogoRow logos={row} />
                 <ClientLogoRow logos={row} duplicate />
               </div>
@@ -297,8 +301,8 @@ export default async function HomePage() {
           className="section border-y border-white/[0.07] bg-ink-soft/40"
           aria-labelledby="industries-heading"
         >
-          <div className="shell grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-12">
-            <div>
+          <div className="shell grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-12">
+            <div className="min-w-0">
               <p className="eyebrow">
                 <span className="dot" aria-hidden="true" />
                 Industries we serve
