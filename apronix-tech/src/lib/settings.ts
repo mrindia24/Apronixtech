@@ -42,7 +42,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   serviceArea: 'Working with clients remotely across India and worldwide.',
   whatsapp: whatsappLink('Hi Apronix Tech, I would like to discuss a project.'),
   socials: [],
-  instagramReels: [],
+  instagramReels: ['https://www.instagram.com/reel/DfNd_L8I4N1/'],
   footerNote: 'Built with care by Apronix Tech.',
   businessHours: 'Mon–Fri, 10:00–19:00 IST',
   showTestimonials: true,
